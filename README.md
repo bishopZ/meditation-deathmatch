@@ -1,6 +1,10 @@
 
 
-#Node ThinkGear Visualizer v0.1
+#Meditation Deathmatch v0.1
+
+For Meditation Deathmatch, two opponents face off to meditate. We use EEG to read their brain signals and determine who is staying in a meditative state better. Several other biometric factors are also monitored, and the information is visualized in a creative fashion on a projection screen. Various game rules may be used, but in one basic version, a health meter decreases when one opponent is not doing as well as the other.
+
+
 
 ##Installation
 
