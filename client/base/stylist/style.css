@@ -1,0 +1,1502 @@
+@charset "UTF-8";
+/* HTML5 display definitions (shim) */
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section {
+  display: block; }
+
+audio, canvas, video {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1; }
+
+audio:not([controls]) {
+  display: none; }
+
+[hidden] {
+  display: none; }
+
+/* a few broad corrections */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, iframe {
+  margin: 0;
+  padding: 0;
+  *zoom: 1;
+  box-sizing: border-box;
+  border: none; }
+
+/* Skin */
+body:after {
+  clear: both;
+  display: block;
+  visibility: hidden;
+  overflow: hidden;
+  height: 0 !important;
+  line-height: 0;
+  font-size: xx-large;
+  content: " x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x "; }
+
+/* browser drop shadow */
+body:before {
+  content: "";
+  position: fixed;
+  top: -10px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+  -moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+  z-index: 100; }
+
+/* display */
+.block {
+  display: block; }
+
+.hide {
+  display: none; }
+
+.overflow {
+  position: relative;
+  overflow: hidden; }
+
+.overflowX {
+  position: relative;
+  overflow-x: hidden; }
+
+.overflowY {
+  position: relative;
+  overflow-y: hidden; }
+
+.clear {
+  clear: both; }
+
+.temp {
+  position: absolute;
+  display: none;
+  left: -9999px;
+  top: -9999px; }
+
+/* scroll */
+/* always force a scrollbar in non-IE */
+html {
+  overflow-y: scroll; }
+
+.scroll {
+  overflow: scroll; }
+
+.scrollX {
+  overflow-x: scroll; }
+
+.scrollY {
+  overflow-y: scroll; }
+
+/* Hide from both screenreaders and browsers: h5bp.com/u */
+.hidden {
+  display: none !important;
+  visibility: hidden; }
+
+/* Hide only visually, but have it available for screenreaders: h5bp.com/v */
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px; }
+
+/* Extends the .visuallyhidden class to allow the element to be focusable when navigated to via the keyboard: h5bp.com/p */
+.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto; }
+
+/* Hide visually and from screenreaders, but maintain layout */
+.invisible {
+  visibility: hidden; }
+
+/* Layout */
+nav {
+  position: fixed; }
+
+header, footer {
+  width: 100%; }
+
+.main {
+  margin: auto 0;
+  width: 1240px;
+  margin-left: -620px; }
+
+.frame, .frameA, .frameR {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: transparent; }
+
+.frame, .frameA {
+  position: absolute;
+  top: 0;
+  left: 0; }
+
+.frameR {
+  position: relative; }
+
+.content {
+  height: auto;
+  width: auto;
+  padding: 0;
+  margin: 0; }
+
+.offscreen {
+  position: absolute;
+  top: -9999px;
+  left: -9999px; }
+
+.liquid {
+  width: auto;
+  margin: 0; }
+
+.leftCol {
+  float: left;
+  width: 250px;
+  _margin-right: -3px; }
+
+.rightCol {
+  float: right;
+  width: 300px;
+  _margin-left: -3px; }
+
+.overlay {
+  position: fixed;
+  display: none;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 2; }
+
+/* positioning x,y */
+.abs {
+  position: absolute; }
+
+.rel {
+  position: relative;
+  display: inline;
+  float: left; }
+
+.inline {
+  display: inline; }
+
+.inlineB {
+  display: inline-block;
+  display: -moz-inline-stack;
+  *display: inline; }
+
+.fixed {
+  position: fixed; }
+
+.float, .floatL {
+  float: left; }
+
+.floatR {
+  float: right; }
+
+.left {
+  left: 0; }
+
+.left1 {
+  left: 50px; }
+
+.left2 {
+  left: 100px; }
+
+.left3 {
+  left: 150px; }
+
+.right {
+  right: 0; }
+
+.right1 {
+  right: 50px; }
+
+.right2 {
+  right: 100px; }
+
+.right3 {
+  right: 150px; }
+
+.top {
+  top: 0; }
+
+.top1 {
+  top: 100px; }
+
+.top2 {
+  top: 200px; }
+
+.top3 {
+  top: 300px; }
+
+.bottom {
+  bottom: 0; }
+
+.bottom1 {
+  bottom: 100px; }
+
+.bottom2 {
+  bottom: 200px; }
+
+.bottom3 {
+  bottom: 300px; }
+
+.center {
+  left: 50%; }
+
+.middle {
+  top: 50%; }
+
+.full {
+  margin: 0;
+  height: 100%;
+  width: 100%; }
+
+/* Sizing */
+.wa {
+  width: auto; }
+
+.w0 {
+  width: 0px; }
+
+.w-1 {
+  width: 1px; }
+
+.w1 {
+  width: 100%; }
+
+.w2 {
+  width: 50%; }
+
+.w3 {
+  width: 33%; }
+
+.w4 {
+  width: 25%; }
+
+.w5 {
+  width: 12%; }
+
+.ha {
+  height: auto; }
+
+.h0 {
+  height: 0px; }
+
+.h-1 {
+  height: 1px; }
+
+.h1 {
+  height: 100%; }
+
+.h2 {
+  height: 50%; }
+
+.h3 {
+  height: 33%; }
+
+.h4 {
+  height: 25%; }
+
+.h5 {
+  height: 12%; }
+
+/* Z-Index & Opacity */
+.outer {
+  position: relative;
+  width: 100%;
+  height: 100%; }
+
+.inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  overflow: visible; }
+
+.z1 {
+  z-index: 1; }
+
+.z2 {
+  z-index: 2; }
+
+.z3 {
+  z-index: 3; }
+
+.z4 {
+  z-index: 4; }
+
+.z5 {
+  z-index: 5; }
+
+.z6 {
+  z-index: 6; }
+
+.z7 {
+  z-index: 7; }
+
+.z8 {
+  z-index: 8; }
+
+.z9 {
+  z-index: 9; }
+
+.z99, .z999, .above {
+  z-index: 9999; }
+
+.a0, .alpha0, .transparent {
+  opacity: 0;
+  -moz-opacity: 0;
+  filter: alpha(opacity=0); }
+
+.a1, .alpha1 {
+  opacity: 1;
+  -moz-opacity: 1;
+  filter: alpha(opacity=1); }
+
+.a2, .alpha2 {
+  opacity: 0.75;
+  -moz-opacity: 0.75;
+  filter: alpha(opacity=0.75); }
+
+.a3, .alpha3 {
+  opacity: 0.5;
+  -moz-opacity: 0.5;
+  filter: alpha(opacity=0.5); }
+
+.a4, .alpha4 {
+  opacity: 0.33;
+  -moz-opacity: 0.33;
+  filter: alpha(opacity=0.33); }
+
+/* Margins */
+.margin {
+  margin: 10px; }
+
+.margin0 {
+  margin: 0; }
+
+.margin1 {
+  margin: 15px; }
+
+.margin2 {
+  margin: 25px; }
+
+.marginL {
+  margin-left: 15px; }
+
+.marginR {
+  margin-right: 15px; }
+
+.marginB {
+  margin-bottom: 15px; }
+
+.marginT {
+  margin-top: 15px; }
+
+.pad {
+  padding: 10px; }
+
+.pad0 {
+  padding: 0; }
+
+.pad1 {
+  padding: 15px; }
+
+.pad2 {
+  padding: 25px; }
+
+.padT {
+  padding-top: 35px; }
+
+.padB {
+  padding-bottom: 35px; }
+
+.padL {
+  padding-left: 35px; }
+
+.padR {
+  padding-right: 35px; }
+
+.first, .alpha {
+  margin-left: 0; }
+
+.last, .omega {
+  margin-right: 0; }
+
+.gutterS {
+  margin-left: 30px; }
+
+.gutterM, .gutter {
+  margin-left: 40px; }
+
+.gutterL {
+  margin-left: 50px; }
+
+.inset {
+  margin-left: 15px;
+  margin-right: 15px; }
+
+/* spacing helpers
+p,m = padding,margin
+a,t,r,b,l,h,v = all,top,right,bottom,left,horizontal,vertical
+s,m,l,n = small(5px),medium(10px),large(20px),none(0px)
+*/
+.ptn, .pvn, .pan {
+  padding-top: 0px !important; }
+
+.pts, .pvs, .pas {
+  padding-top: 5px !important; }
+
+.ptm, .pvm, .pam {
+  padding-top: 10px !important; }
+
+.ptl, .pvl, .pal {
+  padding-top: 20px !important; }
+
+.prn, .phn, .pan {
+  padding-right: 0px !important; }
+
+.prs, .phs, .pas {
+  padding-right: 5px !important; }
+
+.prm, .phm, .pam {
+  padding-right: 10px !important; }
+
+.prl, .phl, .pal {
+  padding-right: 20px !important; }
+
+.pbn, .pvn, .pan {
+  padding-bottom: 0px !important; }
+
+.pbs, .pvs, .pas {
+  padding-bottom: 5px !important; }
+
+.pbm, .pvm, .pam {
+  padding-bottom: 10px !important; }
+
+.pbl, .pvl, .pal {
+  padding-bottom: 20px !important; }
+
+.pln, .phn, .pan {
+  padding-left: 0px !important; }
+
+.pls, .phs, .pas {
+  padding-left: 5px !important; }
+
+.plm, .phm, .pam {
+  padding-left: 10px !important; }
+
+.pll, .phl, .pal {
+  padding-left: 20px !important; }
+
+.mtn, .mvn, .man {
+  margin-top: 0px !important; }
+
+.mts, .mvs, .mas {
+  margin-top: 5px !important; }
+
+.mtm, .mvm, .mam {
+  margin-top: 10px !important; }
+
+.mtl, .mvl, .mal {
+  margin-top: 20px !important; }
+
+.mrn, .mhn, .man {
+  margin-right: 0px !important; }
+
+.mrs, .mhs, .mas {
+  margin-right: 5px !important; }
+
+.mrm, .mhm, .mam {
+  margin-right: 10px !important; }
+
+.mrl, .mhl, .mal {
+  margin-right: 20px !important; }
+
+.mbn, .mvn, .man {
+  margin-bottom: 0px !important; }
+
+.mbs, .mvs, .mas {
+  margin-bottom: 5px !important; }
+
+.mbm, .mvm, .mam {
+  margin-bottom: 10px !important; }
+
+.mbl, .mvl, .mal {
+  margin-bottom: 20px !important; }
+
+.mln, .mhn, .man {
+  margin-left: 0px !important; }
+
+.mls, .mhs, .mas {
+  margin-left: 5px !important; }
+
+.mlm, .mhm, .mam {
+  margin-left: 10px !important; }
+
+.mll, .mhl, .mal {
+  margin-left: 20px !important; }
+
+.mra, .mha {
+  margin-right: auto !important; }
+
+.mla, .mha {
+  margin-left: auto !important; }
+
+/* Images */
+/* Correct overflow not hidden in IE9 */
+svg:not(:root) {
+  overflow: hidden; }
+
+hr {
+  background-color: #c8c7c7;
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0; }
+
+hr.big {
+  border: 5px solid #e2e2e2;
+  border-width: 0 0 5px 0;
+  margin: 20px 10px 10px 10px; }
+
+figure {
+  margin: 0; }
+
+img {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  line-height: 0;
+  vertical-align: top;
+  -ms-interpolation-mode: bicubic; }
+
+img.full {
+  width: 100%;
+  height: 100%; }
+
+img.scale {
+  max-width: 100%;
+  height: auto; }
+
+img.flip {
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH"; }
+
+.icon {
+  margin-right: 5px; }
+
+/* background positions */
+.tl {
+  background-position: left top; }
+
+.tr {
+  background-position: right top; }
+
+.bl {
+  background-position: left bottom; }
+
+.br {
+  background-position: right bottom; }
+
+.br, .tr {
+  float: right; }
+
+.tr, .tl {
+  overflow: hidden;
+  margin-bottom: -32000px; }
+
+/* margin bottom needs to be < -9px */
+.bl, .br {
+  margin-top: -10px; }
+
+.tc {
+  background-position: center top; }
+
+.bc {
+  background-position: center bottom;
+  _zoom: 1; }
+
+/* this zoom required for IE5.5 only*/
+/* Basic color classes */
+.red {
+  background-color: red; }
+
+.black {
+  background-color: black; }
+
+.white {
+  background-color: white; }
+
+.grey {
+  background-color: grey; }
+
+/* borders */
+.box, .outline, .border {
+  border: 1px solid #444; }
+
+.borderB {
+  border-bottom: 1px solid #CCC; }
+
+.borderT {
+  border-top: 1px solid #CCC; }
+
+.borderL {
+  border-left: 1px solid #AAA; }
+
+.borderR {
+  border-right: 1px solid #CCC; }
+
+.roundedCorners {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  /* future proofing */
+  -khtml-border-radius: 10px;
+  /* for old Konqueror browsers */ }
+
+.shadow {
+  -moz-box-shadow: 3px 3px 5px 6px #ccc;
+  -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+  box-shadow: 3px 3px 5px 6px #ccc; }
+
+.shadow1 {
+  -moz-box-shadow: inset 0 0 10px #000000;
+  -webkit-box-shadow: inset 0 0 10px #000000;
+  box-shadow: inset 0 0 10px #000000; }
+
+.shadow2 {
+  -webkit-box-shadow: 0 8px 6px -6px black;
+  -moz-box-shadow: 0 8px 6px -6px black;
+  box-shadow: 0 8px 6px -6px black; }
+
+.shadow3 {
+  background: #eee;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15), 0 10px 0 -5px #eeeeee, 0 10px 1px -4px rgba(0, 0, 0, 0.15), 0 20px 0 -10px #eeeeee, 0 20px 1px -9px rgba(0, 0, 0, 0.15);
+  /* The third layer shadow */ }
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: inherit;
+  font: 100%; }
+
+th, th img, td, td img {
+  vertical-align: top; }
+
+th {
+  font-weight: bold;
+  text-align: left; }
+
+.odd {
+  background-color: #fff; }
+
+.even {
+  background-color: #eee; }
+
+table.stripe tr:nth-child(odd) {
+  /* HTML5 only */
+  background-color: #ccc; }
+
+/** 
+ * Data Table 
+ * Allows you to align various table cells so that the alignment class can be placed on either the table, table row, or table cell 
+ * Cell takes precedence over table row and table
+ * Table row takes precedence over table
+ */
+table.data {
+  position: relative;
+  zoom: 1;
+  vertical-align: top;
+  text-align: left;
+  border-right: solid 1px transparent;
+  width: 100%;
+  table-layout: fixed; }
+
+table.data th, table.data td {
+  padding: 3px 20px; }
+
+/* horizontal alignment */
+.txtC, table .txtC, table tr .txtC {
+  text-align: center; }
+
+.txtL, table .txtL, table tr .txtL {
+  text-align: left; }
+
+.txtR, table .txtR, table tr .txtR {
+  text-align: right; }
+
+/* vertical alignment */
+.txtT, table .txtT, table tr .txtT {
+  vertical-align: top; }
+
+.txtB, table .txtB, table tr .txtB {
+  vertical-align: bottom; }
+
+.txtM, table .txtM, table tr .txtM {
+  vertical-align: middle; }
+
+/* simple table @extends data table */
+table.simple {
+  padding: 20px;
+  border: 1px solid #AE0345; }
+
+table.simple th, table.simple td {
+  border: 1px solid #AE0345; }
+
+table.simple thead tr {
+  background-color: #fff0f8; }
+
+table.simple th {
+  color: #000;
+  font-weight: bold; }
+
+table.spec {
+  padding: 10px;
+  border-top: 1px solid #e2e2e2;
+  border-bottom-color: #fff;
+  border-left: none;
+  border-right: none; }
+
+table.spec th, table.spec td {
+  border: 1px solid #e2e2e2;
+  border-width: 1px 0;
+  padding-left: 0; }
+
+table.spec .odd, table.spec .even {
+  background-color: #fff; }
+
+/* #Lists */
+dd {
+  margin: 0 0 0 40px; }
+
+nav ul, nav ol {
+  list-style: none;
+  list-style-image: none;
+  margin: 0;
+  padding: 0; }
+
+ul, ol {
+  margin: 1em 0;
+  padding: 0 0 0 20px; }
+
+ol li {
+  list-style: decimal; }
+
+ul li {
+  list-style: disc; }
+
+ol li, ul li {
+  margin-left: 30px; }
+
+ul.none {
+  list-style: none outside; }
+
+ul.square {
+  list-style: square outside; }
+
+ul.circle {
+  list-style: circle outside; }
+
+ul.disc {
+  list-style: disc outside; }
+
+ul ul, ul ol,
+ol ol, ol ul {
+  margin: 4px 0 5px 10px;
+  font-size: 90%; }
+
+ul ul li, ul ol li,
+ol ol li, ol ul li {
+  margin-bottom: 6px; }
+
+li {
+  line-height: 18px;
+  margin-bottom: 5px; }
+
+li p {
+  line-height: 21px; }
+
+ul.large li {
+  line-height: 21px; }
+
+ul.inline li {
+  display: inline; }
+
+ul.list {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px; }
+
+ul.list li {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px; }
+
+ul.pad0 li {
+  padding: 0px; }
+
+ul.margin0 li {
+  margin: 0px; }
+
+ul.indent {
+  margin-left: 45px; }
+
+/* Typography */
+/* for readability */
+body {
+  background: #efefef; }
+
+/* broad reset */
+html, body, address, caption, cite, code, dfn, em, strong, b, i,
+ul, ol, blockquote, q, quote, label, th, td, var,
+textarea, input, select, button,
+p, a, h1, h2, h3, h4, h5, h6 {
+  color: #444;
+  font-size: small;
+  font: x-small;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.4em;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  text-align: left;
+  font-weight: 200;
+  font-style: normal;
+  text-rendering: optimizeLegibility; }
+
+/* font colors */
+span .red, li .red, address .red, caption .red, cite .red, code .red, dfn .red, em .red, strong .red, b .red, i .red,
+blockquote .red, q .red, quote .red, label .red, th .red, td .red, var .red,
+textarea .red, input .red, select .red, button .red,
+p .red, a .red, h1 .red, h2 .red, h3 .red, h4 .red, h5 .red, h6 .red {
+  color: red; }
+span .black, li .black, address .black, caption .black, cite .black, code .black, dfn .black, em .black, strong .black, b .black, i .black,
+blockquote .black, q .black, quote .black, label .black, th .black, td .black, var .black,
+textarea .black, input .black, select .black, button .black,
+p .black, a .black, h1 .black, h2 .black, h3 .black, h4 .black, h5 .black, h6 .black {
+  color: black; }
+span .white, li .white, address .white, caption .white, cite .white, code .white, dfn .white, em .white, strong .white, b .white, i .white,
+blockquote .white, q .white, quote .white, label .white, th .white, td .white, var .white,
+textarea .white, input .white, select .white, button .white,
+p .white, a .white, h1 .white, h2 .white, h3 .white, h4 .white, h5 .white, h6 .white {
+  color: white; }
+span .pink, li .pink, address .pink, caption .pink, cite .pink, code .pink, dfn .pink, em .pink, strong .pink, b .pink, i .pink,
+blockquote .pink, q .pink, quote .pink, label .pink, th .pink, td .pink, var .pink,
+textarea .pink, input .pink, select .pink, button .pink,
+p .pink, a .pink, h1 .pink, h2 .pink, h3 .pink, h4 .pink, h5 .pink, h6 .pink {
+  background: #EF5BA1;
+  color: #FFF; }
+span .pink b, span .pink strong, li .pink b, li .pink strong, address .pink b, address .pink strong, caption .pink b, caption .pink strong, cite .pink b, cite .pink strong, code .pink b, code .pink strong, dfn .pink b, dfn .pink strong, em .pink b, em .pink strong, strong .pink b, strong .pink strong, b .pink b, b .pink strong, i .pink b, i .pink strong,
+blockquote .pink b,
+blockquote .pink strong, q .pink b, q .pink strong, quote .pink b, quote .pink strong, label .pink b, label .pink strong, th .pink b, th .pink strong, td .pink b, td .pink strong, var .pink b, var .pink strong,
+textarea .pink b,
+textarea .pink strong, input .pink b, input .pink strong, select .pink b, select .pink strong, button .pink b, button .pink strong,
+p .pink b,
+p .pink strong, a .pink b, a .pink strong, h1 .pink b, h1 .pink strong, h2 .pink b, h2 .pink strong, h3 .pink b, h3 .pink strong, h4 .pink b, h4 .pink strong, h5 .pink b, h5 .pink strong, h6 .pink b, h6 .pink strong {
+  font-size: 15px;
+  letter-spacing: -1px; }
+span .gray, li .gray, address .gray, caption .gray, cite .gray, code .gray, dfn .gray, em .gray, strong .gray, b .gray, i .gray,
+blockquote .gray, q .gray, quote .gray, label .gray, th .gray, td .gray, var .gray,
+textarea .gray, input .gray, select .gray, button .gray,
+p .gray, a .gray, h1 .gray, h2 .gray, h3 .gray, h4 .gray, h5 .gray, h6 .gray {
+  color: #CCC; }
+span .gray a, li .gray a, address .gray a, caption .gray a, cite .gray a, code .gray a, dfn .gray a, em .gray a, strong .gray a, b .gray a, i .gray a,
+blockquote .gray a, q .gray a, quote .gray a, label .gray a, th .gray a, td .gray a, var .gray a,
+textarea .gray a, input .gray a, select .gray a, button .gray a,
+p .gray a, a .gray a, h1 .gray a, h2 .gray a, h3 .gray a, h4 .gray a, h5 .gray a, h6 .gray a {
+  color: #CCC;
+  font-weight: bold; }
+
+/* prevents long URLs from spilling out of divs */
+.block, .comment, textarea, blockquote, label, p, td, th, h1, h2, h3, h4, h5, h6 {
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
+  /* Non standard for webkit */
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto; }
+
+/* ====== Default spacing ====== */
+h1, h2, h3, h4, h5, h6, ul, ol, dl, p, blockquote {
+  color: #333;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 5px; }
+  table h1, table h2, table h3, table h4, table h5, table h6, table ul, table ol, table dl, table p, table blockquote {
+    margin-top: 0;
+    padding-top: 0; }
+
+h1, h2 {
+  margin: 0;
+  padding: 0;
+  margin-top: 20px;
+  margin-bottom: 10px; }
+
+h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  margin-top: 12px;
+  margin-bottom: 10px; }
+
+/* www.aestheticallyloyal.com/public/optimize-legibility/ */
+h1 {
+  font-size: 202%;
+  line-height: 2.8em; }
+
+h2 {
+  font-size: 177%;
+  line-height: 2.2em; }
+
+h3 {
+  font-size: 133%;
+  line-height: 1.8em; }
+
+h4 {
+  font-size: 115%;
+  line-height: 1.4em;
+  font-weight: 600;
+  color: #666; }
+
+h5 {
+  font-size: 88%;
+  line-height: 1.2em;
+  font-weight: 800;
+  color: #777; }
+
+h6 {
+  font-size: 88%;
+  line-height: 1.2em;
+  font-style: italic; }
+
+h1.large {
+  font-size: 44px;
+  line-height: 50px; }
+
+h1.gradient {
+  font-size: 72px;
+  background: -webkit-linear-gradient(#eeeeee, #333333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; }
+
+small, .small {
+  font-size: 85%; }
+
+.large, .big {
+  font-size: 135%; }
+
+b, strong, .strong, .bold, address, caption, cite, code, dfn, th, var {
+  font-weight: 400; }
+
+dfn, i, em, .italic, .italics {
+  font-style: italic; }
+
+abbr, acronym {
+  border-bottom: 1px dotted #222;
+  cursor: help;
+  font-variant: normal; }
+
+cite {
+  display: block;
+  text-align: right;
+  padding-top: 10px; }
+
+caption {
+  font-size: 13px;
+  color: #666666;
+  font-style: italic;
+  padding-top: 0; }
+
+ins {
+  background: #ff9;
+  color: #000;
+  text-decoration: none; }
+
+mark {
+  background: #ff0;
+  color: #000;
+  font-style: italic;
+  font-weight: bold; }
+
+/* Redeclare monospace font family: h5bp.com/j */
+pre, code, kbd, samp, tt {
+  font-family: monospace, serif;
+  _font-family: 'courier new', monospace;
+  font-size: 108%;
+  line-height: 100%;
+  color: #0B8C8F;
+  margin: 10px; }
+
+/* Improve readability of pre-formatted text in all browsers */
+pre, .pre {
+  padding: 15px;
+  margin: 0;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  /* css-3 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */ }
+
+sub, sup, .sup, .sub {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline; }
+
+sup, .sup {
+  top: -0.5em;
+  vertical-align: text-top; }
+
+sub, .sub {
+  bottom: -0.25em;
+  vertical-align: text-bottom; }
+
+::selection {
+  color: #fff;
+  text-shadow: none;
+  background-color: #fe57a1; }
+
+::-moz-selection {
+  color: #fff;
+  text-shadow: none;
+  background: #fe57a1; }
+
+p {
+  line-height: 150%;
+  padding: 0 0 1em 0; }
+
+p.dropcap:first-child:first-letter {
+  float: left;
+  color: #903;
+  font-size: 75px;
+  line-height: 60px;
+  padding-top: 4px;
+  padding-right: 8px;
+  padding-left: 3px;
+  font-family: Georgia; }
+
+.alignR {
+  text-align: right; }
+
+.alignL {
+  text-align: left; }
+
+.alignC {
+  text-align: center; }
+
+.alignT {
+  vertical-align: top; }
+
+.alignM {
+  vertical-align: middle; }
+
+.alignB {
+  vertical-align: bottom; }
+
+.plain {
+  text-transform: none; }
+
+.upper {
+  text-transform: uppercase; }
+
+.lower {
+  text-transform: lowercase; }
+
+.caps {
+  text-transform: capitalize; }
+
+.nowrap {
+  white-space: nowrap; }
+
+.indent {
+  margin-left: 35px; }
+
+.single p {
+  line-height: 110%;
+  margin: 0;
+  padding: 0; }
+
+.double p {
+  line-height: 220%;
+  margin: 0;
+  padding: 0; }
+
+.truncate {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+.amp {
+  font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
+  font-style: italic;
+  font-weight: normal; }
+
+.error {
+  color: #744;
+  font: normal 12px/20px Arial;
+  padding: 7px;
+  margin: 0; }
+
+.todo {
+  font-weight: bold;
+  color: #c00;
+  border: 1px dashed #c00;
+  margin: 10px;
+  padding: 5px;
+  background-color: #ffcfce; }
+
+.highlight {
+  background: #CCD9E5;
+  color: #3a3a3a; }
+
+p.shadow, h1.shadow, h2.shadow, h3.shadow, h4.shadow, h5.shadow, h6.shadow {
+  text-shadow: 1px 1px 1px #000; }
+
+.blur {
+  color: transparent;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
+
+.detail {
+  color: #777;
+  font-size: 11px;
+  display: block; }
+
+.phone:before {
+  content: "\2706"; }
+
+.important:before {
+  content: "\27BD"; }
+
+.alert:before {
+  content: "\26A0"; }
+
+.category {
+  font-size: 108%;
+  font-weight: normal;
+  font-style: normal;
+  text-transform: uppercase;
+  color: #333; }
+
+.category a {
+  color: #333; }
+
+/* Links */
+a, a:active, a:visited {
+  color: #607890; }
+
+a:hover {
+  color: #036;
+  text-decoration: underline; }
+
+a:focus {
+  outline: thin dotted;
+  background-color: #FFFFCC; }
+
+a, .noHover:hover {
+  text-decoration: none; }
+
+.noHover:hover {
+  cursor: pointer; }
+
+/* Improve readability when focused and hovered in all browsers: h5bp.com/h */
+a:hover, a:active {
+  outline: 0; }
+
+a img {
+  border: 0; }
+
+a.gradient {
+  position: relative;
+  padding-bottom: 6px; }
+
+/*
+a.gradient:hover::after {
+   content: "";
+   position: absolute;
+   bottom: 2px;
+   left: 0;
+   height: 1px;
+   width: 100%;
+   background: #444;
+   background: -webkit-gradient(linear, left top, right top, color-stop(0%,transparent), color-stop(50%,#444), color-stop(100%,transparent));
+   background: -webkit-linear-gradient(left, transparent 0%,#444 50%,transparent 100%);
+   background: -moz-linear-gradient(left, transparent 0%, #444 50%, #transparent 100%);
+   background: -ms-linear-gradient(left, transparent 0%,#444 50%,#transparent 100%);
+   background: -o-linear-gradient(left, transparent 0%,#444 50%,transparent 100%);
+   background: linear-gradient(left, transparent 0%,#444 50%,transparent 100%);
+}
+*/
+.hover {
+  cursor: pointer; }
+
+.link {
+  cursor: pointer; }
+
+a.disabled,
+a.disabled:hover,
+span.disabled,
+span.disabled a {
+  color: #ccc;
+  cursor: pointer; }
+
+/*  j.mp/webkit-tap-highlight-color */
+a:link {
+  -webkit-tap-highlight-color: #FF5E99; }
+
+a[href^="mailto:"]:before {
+  content: "\2709"; }
+
+/* Fonts */
+/* Times New Roman-based stack */
+.times {
+  font-family: Cambria, "Hoefler Text", Utopia, "Liberation Serif", "Nimbus Roman No9 L Regular", Times, "Times New Roman", serif; }
+
+/* Modern Georgia-based serif stack */
+.georgia {
+  font-family: Constantia, "Lucida Bright", Lucidabright, "Lucida Serif", Lucida, "DejaVu Serif", "Bitstream Vera Serif", "Liberation Serif", Georgia, serif; }
+
+/* Traditional Garamond-based serif stack */
+.garmond {
+  font-family: "Palatino Linotype", Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", Garamond, "Apple Garamond", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif; }
+
+/* Helvetica/Arial-based sans serif stack */
+.helvetica {
+  font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+/* Verdana-based sans serif stack */
+.verdana {
+  font-family: Corbel, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", "Bitstream Vera Sans", "Liberation Sans", Verdana, "Verdana Ref", sans-serif; }
+
+/* Trebuchet-based sans serif stack */
+.trebuchet {
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif; }
+
+/* Impact-based sans serif stack */
+.impact {
+  font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", sans-serif; }
+
+/* Monospace stack */
+.mono {
+  font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace; }
+
+/*	Quotes  */
+blockquote, blockquote p {
+  font-size: 17px;
+  line-height: 24px;
+  color: #777;
+  font-style: italic; }
+
+blockquote {
+  margin: 1.5em 10px;
+  padding: .5em 10px;
+  border-left: 1px solid #ddd;
+  quotes: "\201C" "\201D" "\2018" "\2019"; }
+
+blockquote p {
+  display: inline; }
+
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: .1em;
+  margin-right: .25em;
+  vertical-align: -.4em; }
+
+blockquote cite {
+  display: block;
+  font-size: 12px;
+  color: #555; }
+
+blockquote cite:before {
+  content: "\2014 \0020"; }
+
+blockquote cite a, blockquote cite a:visited, blockquote cite a:visited {
+  color: #555; }
+
+q, quote {
+  quotes: none; }
+
+q:before, q:after, quote:before, quote:after {
+  content: "";
+  content: none; }
+
+/* Some basic print styles */
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -ms-filter: none !important; }
+
+  /* Black prints faster: h5bp.com/s */
+  a, a:visited {
+    text-decoration: underline; }
+
+  a[href]:after {
+    content: " (" attr(href) ")"; }
+
+  abbr[title]:after {
+    content: " (" attr(title) ")"; }
+
+  pre, blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid; }
+
+  thead {
+    display: table-header-group; }
+
+  /* h5bp.com/t */
+  tr, img {
+    page-break-inside: avoid; }
+
+  img {
+    max-width: 100% !important; }
+
+  @page {
+    margin: 0.5cm; }
+
+  p, h2, h3 {
+    orphans: 3;
+    widows: 3; }
+
+  h2, h3 {
+    page-break-after: avoid; }
+
+  .page {
+    page-break-before: always; } }
+/* Language-specific tweaks */
+:lang(af) {
+  quotes: '\201E' '\201D' '\201A' '\2019'; }
+
+:lang(ak) {
+  font-family: Lucida,"DejaVu Sans",inherit; }
+
+:lang(ar) {
+  font-family: Tahoma 12,Nazli,KacstOne,"DejaVu Sans",inherit; }
+
+:lang(bg) {
+  quotes: '\201E' '\201C' '\201A' '\2018'; }
+
+:lang(bn) {
+  font-family: FreeSans,MuktiNarrow,Vrinda,inherit;
+  font-size: 1.1em;
+  line-height: 1.4em; }
+
+:lang(cs) {
+  quotes: '\201E' '\201C' '\201A' '\2018'; }
+
+:lang(da) {
+  quotes: '\00BB' '\00AB' '\203A' '\2039'; }
+
+:lang(de) {
+  quotes: '\201E' '\201C' '\201A' '\2018'; }
+
+:lang(el) {
+  font-family: "DejaVu Sans",inherit;
+  quotes: '\00AB' '\00BB' '\2039' '\203A'; }
+
+:lang(en-GB) {
+  quotes: '\2018' '\2019' '\201C' '\201D'; }
+
+:lang(es) {
+  quotes: '\00AB' '\00BB' '\2039' '\203A'; }
+
+:lang(fa) {
+  font-family: Terafik,Traffic,Roya,Nazli,Nazanin,sans;
+  font-size: 1.5em; }
+
+:lang(fi) {
+  quotes: '\201D' '\201D' '\2019' '\2019'; }
+
+:lang(fr) {
+  quotes: '\ab\2005' '\2005\bb' '\2039\2005' '\2005\203a'; }
+
+:lang(hr) {
+  quotes: '\00BB' '\00AB' '\203A' '\2039'; }
+
+:lang(is) {
+  quotes: '\201E' '\201C' '\201A' '\2018'; }
+
+:lang(ja) {
+  font-size: 1.1em; }
+
+:lang(km) {
+  font-family: "Khmer OS System","Khmer OS","Khmer Kampongtrach","CDT Khmer",inherit;
+  line-height: 2em; }
+
+:lang(ko) {
+  font-size: 1.1em; }
+
+:lang(lt) {
+  quotes: '\201E' '\201C' '\201A' '\2018'; }
+
+:lang(nl) {
+  quotes: '\201E' '\201D' '\201A' '\2019'; }
+
+:lang(pl) {
+  quotes: '\201E' '\201D' '\201A' '\2019'; }
+
+:lang(ro) {
+  quotes: '\201E' '\201C' '\201A' '\2018'; }
+
+:lang(sk) {
+  quotes: '\201E' '\201C' '\201A' '\2018'; }
+
+:lang(sq) {
+  quotes: '\00AB' '\00BB' '\2039' '\203A'; }
+
+:lang(sr) {
+  quotes: '\201E' '\201C' '\201A' '\2018'; }
+
+:lang(sv) {
+  quotes: '\201D' '\201D' '\2019' '\2019'; }
+
+:lang(tr) {
+  quotes: '\00AB' '\00BB' '\2039' '\203A'; }
+
+:lang(vi) {
+  font-family: "Lucida Grande","Vu Phu Tho","DejaVu Sans",inherit; }
+
+:lang(vi) a:hover, :lang(vi) a:active {
+  text-decoration: none;
+  color: #606047; }
+
+:lang(zh) {
+  font-size: 1.5em; }
