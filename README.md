@@ -28,9 +28,12 @@ You should see a message that says, "listening on port 3000." Then open a web br
 
 
 
-###node-thinkgear docs
+###Documentation
 
-Client library for the [ThinkGear Socket Protocol](http://developer.neurosky.com/docs/lib/exe/fetch.php?media=app_notes:thinkgear_socket_protocol.pdf) from [NeuroSky](http://neurosky.com/). 
+Based off the [Node-Neurosky-Visualizer](https://github.com/bishopZ/node-neurosky-visualizer).
+
+The Client library for the [ThinkGear Socket Protocol](http://developer.neurosky.com/docs/lib/exe/fetch.php?media=app_notes:thinkgear_socket_protocol.pdf) from [NeuroSky](http://neurosky.com/). 
+
 
 
 ###Data Model
