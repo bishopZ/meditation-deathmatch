@@ -18,6 +18,10 @@
 
     <style type="text/css">
 
+        body {
+            background-color: #000 !important; 
+        }
+
     	/* Some base page styles */
 		#screen p { 
 			line-height: 22px; 
@@ -35,22 +39,50 @@
 			position: relative;
 			width:100%;
 			height: 18px;
-			background: #d8d8d8;
+			/*background: #d8d8d8;*/
 		}
 		#screen .score {
 			display: inline-block;
 			width: 200px;
 			height: 20px;
-			border: 1px solid #d8d8d8;
+			/*border: 1px solid #d8d8d8;*/
 			border-radius: 5px;
 			clear: both;
 		}
+
+        #container .progress {
+            margin-bottom: 0px;
+        }
 
     </style>
 
   </head>
   <body>
+
+    <div id="container">
+        <div class="progress progress-striped active">
+          <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+            <span class="sr-only">45% Complete</span>
+          </div>
+        </div>
+    
+        <div class="progress progress-striped active">
+          <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+            <span class="sr-only">65% Complete</span>
+          </div>
+        </div>
+    </div>
 	
+    </div>
+
+    <script type="x-tmpl" id="tmpl-intro">
+        <div class="square">
+            <img src="img/background2.png" />
+            <button type="button" class="btn btn-success btn-start">Begin</button>
+            
+        </div>
+    </script>
+
   	<script src="./base/require/require.js"></script> 
     <script>
 
@@ -63,6 +95,7 @@ require([], function () {
 
             'modernizr': 'modernizr-2.0.6.min',
             'jquery': 'jquery/jquery-1.9.1.min',
+            'jquery.center': 'jquery/jquery.center.min',
             'underscore': 'underscore-min',
             'typecast': 'typecast/typecast.raw', // replace with $.type?
             'frame': 'frame2',
@@ -70,7 +103,7 @@ require([], function () {
             'socket.io': 'socket.io/socket.io',
             'lscache': 'lscache', 
 
-            'bootstrap': 'bootstrap/bootstrap.min',
+            'bootstrap': 'bootstrap/js/bootstrap.min',
             'moment': 'moment.min',
         	
 			// TODO: more magic!
@@ -87,9 +120,78 @@ require([], function () {
         }
     });
 
-    require(['./game.js'], function(game){
-    	console.log('done');
+    // require(['./game.js'], function(game){
+    // 	console.log('done');
+    // });
+    require(
+    ['jquery', 'typecast', 'frame', 'model', 'socket.io', 'lscache', 'moment', 
+        'bootstrap',
+        'css!/base/bootstrap/css/bootstrap.min.css',
+        //'css!/base/bootstrap/css/bootstrap-theme.min.css',
+        'css!stylist/style.css',
+        'jquery.center'
+        //    /bootstrap/bootstrap-responsive.min.css
+        //    /stylist/layout.css
+        //    /stylist/forms.css
+        //    /bootstrap/font-awesome.min.css
+    ], function(type, Frame, Model, io, lscache, moment) {
+
+        var $container = $('#container');
+        $container.append($('#tmpl-intro').html());
+
+        // on slide chage
+            // load view
+
+        // game state machine
+
+            // Title Screen
+                // Holder Screen
+            // Device Setup
+                // Game Select: Single or Multi
+                // Player Profile
+            // Game
+                // Game Intro
+                // Game Outro
+            // Scorecard
+                // High Scores
+
+            // Networking
+            // Display Mode
+
+        var $square = $('.square');
+        $square.css({
+            height: 793,
+            width: 1291,
+            // background: '#d8d8d8',
+            position: 'absolute'
+        })
+        .center({
+            top     : 40
+        });
+
+        $('.btn-start')
+            .css({
+                'position': 'absolute',
+                'font-size': '50px',
+                'padding': '40px 40px',
+                'border-radius': '20px'
+            })
+            .center({
+                against : 'parent',
+            })
+            .on('click', function(){
+                alert('begin!');
+            });
+
+        $('.progress')
+            // .css({
+            //     position: 'absolute'
+            // })
+            // .center();
+
+
     });
+
 
 });
 
