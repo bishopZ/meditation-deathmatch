@@ -1,6 +1,6 @@
 
 
-#Meditation Deathmatch v0.1
+#Meditation Deathmatch v0.2
 
 [http://meditationdeathmat.ch/](http://meditationdeathmat.ch/)
 

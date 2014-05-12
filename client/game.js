@@ -1,3 +1,7 @@
+// NOT CURRENTLY USED
+// this is the old v0.1 version
+// here for reference
+
 require(
 	['typecast', 'frame', 'model', 'socket.io', 'lscache', 'moment',
 	    'css!/base/bootstrap/bootstrap.min.css',
