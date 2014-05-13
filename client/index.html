@@ -20,7 +20,10 @@
 
         body {
             background-color: #000 !important; 
-            font-family: franklin_gothic;
+        }
+
+        p {
+            font-family: franklin_gothic !important;    
         }
 
     	/* Some base page styles */
@@ -54,6 +57,12 @@
         #container .progress {
             margin-bottom: 0px;
         }
+        #container .button {
+            border-radius: 0;
+            width: 273px;
+            height: 87px;
+            cursor: pointer;
+        }
 
     </style>
 
@@ -61,7 +70,7 @@
   <body>
 
     <div id="container">
-        <div class="progress progress-striped active">
+        <!-- <div class="progress progress-striped active">
           <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
             <span class="sr-only">45% Complete</span>
           </div>
@@ -71,15 +80,21 @@
           <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
             <span class="sr-only">65% Complete</span>
           </div>
-        </div>
+        </div> -->
     </div>
 	
     </div>
 
     <script type="x-tmpl" id="tmpl-intro">
         <div class="square">
-            <img src="media/background2.png" />
-            <button type="button" class="btn btn-success btn-start">Connect</button>
+            <img src="media/background3.png" />
+            <div class="button button-left" role="button">
+                <p>Word</p>
+            </div>
+            <div class="button button-right" role="button">
+                <p>Word</p>
+            </div>
+            <!-- <button type="button" class="btn btn-success btn-start">Connect</button> -->
             
         </div>
     </script>
@@ -173,32 +188,74 @@ require([], function () {
             top     : 40
         });
 
-        $('.btn-start')
-            .css({
+        var $left = $('.button-left')
+        $left.css({
                 'position': 'absolute',
                 'font-size': '50px',
                 'padding': '40px 40px',
-                'border-radius': '20px'
+                'border-radius': '20px',
+                'margin-left': -140
             })
             .center({
                 against : 'parent',
+                top: 263
             })
             .on('click', function(){
                 
-                io.emit('adapter:start');
+                //io.emit('adapter:start');
                 console.log('connect');
 
             });
 
-        $('.progress')
+        var $leftLabel = $left.find('p')
+        $leftLabel.css({
+                'font-size':28,
+                color: '#ffffff',
+                'text-transform': 'uppercase'
+            });
+        var leftWidth = $leftLabel.width();
+        $leftLabel.css({
+                'margin-left':250 - leftWidth
+            });
+
+        var $right = $('.button-right')
+            .css({
+                'position': 'absolute',
+                'font-size': '50px',
+                'padding': '40px 40px',
+                'border-radius': '20px',
+                'margin-left': 140
+            })
+            .center({
+                against : 'parent',
+                top: 263
+            })
+            .on('click', function(){
+                io.emit('adapter:start');
+                console.log('connect');
+            });
+
+        var $rightLabel = $right.find('p')
+        $rightLabel.css({
+                'font-size':28,
+                color: '#ffffff',
+                'text-transform': 'uppercase'
+            });
+        var rightWidth = $rightLabel.width();
+        $rightLabel.css({
+                'margin-left':250 - rightWidth
+            });
+
+
+
+
+        // $('.progress')
             // .css({
             //     position: 'absolute'
             // })
             // .center();
 
-
     });
-
 
 });
 
