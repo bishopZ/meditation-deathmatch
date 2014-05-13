@@ -20,6 +20,7 @@
 
         body {
             background-color: #000 !important; 
+            font-family: franklin_gothic;
         }
 
     	/* Some base page styles */
@@ -77,7 +78,7 @@
 
     <script type="x-tmpl" id="tmpl-intro">
         <div class="square">
-            <img src="img/background2.png" />
+            <img src="media/background2.png" />
             <button type="button" class="btn btn-success btn-start">Begin</button>
             
         </div>
@@ -126,14 +127,15 @@ require([], function () {
     require(
     ['jquery', 'typecast', 'frame', 'model', 'socket.io', 'lscache', 'moment', 
         'bootstrap',
+        'jquery.center',
         'css!/base/bootstrap/css/bootstrap.min.css',
-        //'css!/base/bootstrap/css/bootstrap-theme.min.css',
-        'css!stylist/style.css',
-        'jquery.center'
+        //'css!bootstrap/css/bootstrap-theme.min.css',
         //    /bootstrap/bootstrap-responsive.min.css
+        'css!stylist/style.css',
         //    /stylist/layout.css
         //    /stylist/forms.css
         //    /bootstrap/font-awesome.min.css
+        'css!/media/franklin/stylesheet.css'
     ], function($, type, Frame, Model, socket, lscache, moment) {
 
         var $container = $('#container');
@@ -183,8 +185,8 @@ require([], function () {
             })
             .on('click', function(){
                 
-                io.emit('connect');
-                alert('connect');
+                io.emit('adapter:start');
+                console.log('connect');
 
             });
 

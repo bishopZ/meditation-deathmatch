@@ -40,16 +40,9 @@ app.use('/', express.static(__dirname + '/client'));
 // Start the Neurosky Connection
 
 var nodeThinkGear = require('./server/node-neurosky');
-var tgClient = nodeThinkGear.createClient({
-	appName:'NodeThinkGear',
-	appKey:'0fc4141b4b45c675cc8d3a765b8d71c5bde9390'
-});
-
 var running = false;
-var startConnector = function(){
-	tgClient.connect();	
-	console.log('connect')
-}
+
+
 var startGame = function(){
 	running = true;
 	console.log('start')
@@ -58,17 +51,26 @@ var stopGame = function(){
 	running = false;
 	console.log('stop')
 }
-// when think-gear sends data
-tgClient.on('data',function(data){
-	// send it to the client browser
-	if (running) { 
-		socket.emit('mindEvent', data); 
-	}
-	//console.log(data);		
+var startConnector = function(){
+	var tgClient = nodeThinkGear.createClient({
+		appName:'NodeThinkGear',
+		appKey:'0fc4141b4b45c675cc8d3a765b8d71c5bde9390'
+	});
+	tgClient.connect();	
+	// when think-gear sends data
+	tgClient.on('data',function(data){
+		// send it to the client browser
+		if (running) { 
+			io.emit('mindEvent', data); 
+		}
+		//console.log(data);		
+	});
+	console.log('connect')
+}
+io.sockets.on('connection', function (socket) {
+	socket.on('adapter:start', startConnector);
+	socket.on('game:start', startGame);
+	socket.on('game:stop', stopGame);
 });
-
-io.sockets.on('connect', startConnector);
-io.sockets.on('start', startGame);
-io.sockets.on('stop', stopGame);
 
 
