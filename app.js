@@ -44,25 +44,31 @@ var tgClient = nodeThinkGear.createClient({
 	appName:'NodeThinkGear',
 	appKey:'0fc4141b4b45c675cc8d3a765b8d71c5bde9390'
 });
-tgClient.connect();
 
-
-// Create a WebSocket connection with a client browser
-io.sockets.on('connection', function (socket) {
-
-	// when think-gear sends data
-	tgClient.on('data',function(data){
-		
-		// send it to the client browser
-		socket.emit('mindEvent', data);
-		//console.log(data);
-		
-	});
-	// could do stuff like
-	// socket.send('message')
-	// socket.on('message', fn)
-	// socket.on('disconnect', fn)
-
-	// "connect" and "disconnect" events is how we keep track of different browsers
-
+var running = false;
+var startConnector = function(){
+	tgClient.connect();	
+	console.log('connect')
+}
+var startGame = function(){
+	running = true;
+	console.log('start')
+}
+var stopGame = function(){
+	running = false;
+	console.log('stop')
+}
+// when think-gear sends data
+tgClient.on('data',function(data){
+	// send it to the client browser
+	if (running) { 
+		socket.emit('mindEvent', data); 
+	}
+	//console.log(data);		
 });
+
+io.sockets.on('connect', startConnector);
+io.sockets.on('start', startGame);
+io.sockets.on('stop', stopGame);
+
+

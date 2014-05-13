@@ -134,7 +134,7 @@ require([], function () {
         //    /stylist/layout.css
         //    /stylist/forms.css
         //    /bootstrap/font-awesome.min.css
-    ], function(type, Frame, Model, io, lscache, moment) {
+    ], function($, type, Frame, Model, socket, lscache, moment) {
 
         var $container = $('#container');
         $container.append($('#tmpl-intro').html());
@@ -158,6 +158,8 @@ require([], function () {
             // Networking
             // Display Mode
 
+        var io = socket.connect();
+
         var $square = $('.square');
         $square.css({
             height: 793,
@@ -180,7 +182,10 @@ require([], function () {
                 against : 'parent',
             })
             .on('click', function(){
-                alert('begin!');
+                
+                io.emit('connect');
+                alert('connect');
+
             });
 
         $('.progress')
