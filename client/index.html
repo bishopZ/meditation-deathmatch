@@ -156,8 +156,192 @@ require([], function () {
         var $container = $('#container');
         $container.append($('#tmpl-intro').html());
 
-        // on slide chage
-            // load view
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+        // Connect to the server
+        var io = socket.connect();
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+        // Set up the buttons
+        var $square = $('.square');
+        $square.css({
+            height: 793,
+            width: 1291,
+            // background: '#d8d8d8',
+            position: 'absolute'
+        })
+        .center({
+            top     : 40
+        });
+
+        var $left = $('.button-left')
+        $left.css({
+                'position': 'absolute',
+                'font-size': '50px',
+                'padding-top': '5px',
+                'border-radius': '20px',
+                'margin-left': -140
+            })
+            .center({
+                against : 'parent',
+                top: 263
+            });
+        var $right = $('.button-right');
+        $right.css({
+                'position': 'absolute',
+                'font-size': '50px',
+                'padding-top': '5px',
+                'border-radius': '20px',
+                'margin-left': 140
+            })
+            .center({
+                against : 'parent',
+                top: 263
+            })
+            
+
+        var $leftLabel = $left.find('p');
+        $leftLabel.css({
+            'font-size':28,
+            color: '#ffffff',
+            'text-transform': 'uppercase',
+            'text-align': 'center'
+        });
+
+        var setLeftButton = function(html, fn){
+            $leftLabel.html(html);
+
+            $left.off('click'); 
+            if (type.fn(fn)) { 
+                $left.on('click', fn); 
+            }
+
+        }
+
+        var $rightLabel = $right.find('p');
+        $rightLabel.css({
+                'font-size':28,
+                color: '#ffffff',
+                'text-transform': 'uppercase',
+                'text-align': 'center'
+            });
+
+        var setRightButton = function(html, fn){
+            $rightLabel.html(html);
+
+            $right.off('click'); 
+            if (type.fn(fn)) { 
+                $right.on('click', fn); 
+            }
+
+        }
+
+        var setButton = function(which, text, fn){
+            if (which === 'left'){
+                setLeftButton(text, fn);
+            } else if (which === 'right') {
+                setRightButton(text, fn);
+            }
+        }
+
+
+        // $('.progress')
+            // .css({
+            //     position: 'absolute'
+            // })
+            // .center();
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+    var current = 0;
+
+    
+    var slide = [
+        {
+            left: [ '' ],
+            right: [ 'Connect to Device', function (){
+                io.emit('adapter:start');
+                console.log('connect');
+                next(); // same as go(1);
+            } ]
+        },
+        {
+            left: [ 'Single Player', function(){
+                console.log('two player');
+                next();
+            } ],
+            right: [ 'Two Player', function (){
+                console.log('two player');
+            } ]
+        },
+        {
+            left: [ 'Profile', function(){
+                console.log('two player');
+            } ],
+            right: [ 'Play', function (){
+                console.log('two player');
+                next();
+            } ]
+        },
+        {
+            left: [ 'Replay', function(){
+                console.log('two player');
+                next();
+            } ],
+            right: [ 'Save', function (){
+                console.log('two player');
+            } ]
+        }
+    ];
+
+
+    // Game engine
+    function next(){
+        if (++current >= slide.length) current = 0;
+        go(current);
+    };
+    function go(which){
+        var left = slide[which].left;
+        var right = slide[which].right;
+        setButton('left', left[0], left[1]);
+        setButton('right', right[0], right[1]);
+        current = which;
+    };
+
+
+    // start
+    go(0);
 
         // game state machine
 
@@ -174,87 +358,6 @@ require([], function () {
 
             // Networking
             // Display Mode
-
-        var io = socket.connect();
-
-        var $square = $('.square');
-        $square.css({
-            height: 793,
-            width: 1291,
-            // background: '#d8d8d8',
-            position: 'absolute'
-        })
-        .center({
-            top     : 40
-        });
-
-        var $left = $('.button-left')
-        $left.css({
-                'position': 'absolute',
-                'font-size': '50px',
-                'padding': '40px 40px',
-                'border-radius': '20px',
-                'margin-left': -140
-            })
-            .center({
-                against : 'parent',
-                top: 263
-            })
-            .on('click', function(){
-                
-                //io.emit('adapter:start');
-                console.log('connect');
-
-            });
-
-        var $leftLabel = $left.find('p')
-        $leftLabel.css({
-                'font-size':28,
-                color: '#ffffff',
-                'text-transform': 'uppercase'
-            });
-        var leftWidth = $leftLabel.width();
-        $leftLabel.css({
-                'margin-left':250 - leftWidth
-            });
-
-        var $right = $('.button-right')
-            .css({
-                'position': 'absolute',
-                'font-size': '50px',
-                'padding': '40px 40px',
-                'border-radius': '20px',
-                'margin-left': 140
-            })
-            .center({
-                against : 'parent',
-                top: 263
-            })
-            .on('click', function(){
-                io.emit('adapter:start');
-                console.log('connect');
-            });
-
-        var $rightLabel = $right.find('p')
-        $rightLabel.css({
-                'font-size':28,
-                color: '#ffffff',
-                'text-transform': 'uppercase'
-            });
-        var rightWidth = $rightLabel.width();
-        $rightLabel.css({
-                'margin-left':250 - rightWidth
-            });
-
-
-
-
-        // $('.progress')
-            // .css({
-            //     position: 'absolute'
-            // })
-            // .center();
-
     });
 
 });
