@@ -22,11 +22,11 @@
             background-color: #000 !important; 
         }
 
-        p {
+        body * {
             font-family: franklin_gothic !important;    
         }
 
-    	/* Some base page styles */
+    	/* Some base page styles 
 		#screen p { 
 			line-height: 22px; 
 			padding: 0; margin: 0; 
@@ -36,19 +36,40 @@
 		#screen .display {
 			width: 100%;
 		}
+        */
 
 		/* The poor man's progress bar */
-		#screen .score .inner {
+        .meters {
+            position: absolute;
+            top: 402px;
+            left: 50%;
+            margin-left: -279px;
+            width: 559px;
+            /*border: 1px solid #333;*/
+        }
+		.meters .score .inner {
 			float: left;
 			position: relative;
-			width:100%;
-			height: 18px;
+			height:100%;
+			width: 18px;
 			/*background: #d8d8d8;*/
 		}
-		#screen .score {
+        .calm .inner { background: #ccd7d9; }
+        .attention .inner { background: #9daeb2; }
+        .depth .inner { background: #6b8c92; }
+        .range .inner { background: #5d848f; }
+        .delta .inner { background: #9daeb2; }
+        .theta .inner { background: #ccd7d9; }
+        .health .inner { background: #3e7d8e; }
+        .power .inner { background: #217a8c; }
+
+        .meters {
+            z-index: 1;
+        }
+		.meters .score {
 			display: inline-block;
-			width: 200px;
-			height: 20px;
+			height: 200px;
+			width: 20px;
 			/*border: 1px solid #d8d8d8;*/
 			border-radius: 5px;
 			clear: both;
@@ -64,13 +85,47 @@
             cursor: pointer;
         }
 
+        .countdown {
+            position: absolute;
+            bottom: 35px;
+            left: 20px;
+            font-size: 28px;
+            color: white;
+            z-index:4;
+        }
+
+        /*svg {
+            height: 200px;
+            width: 700px;
+            position: absolute;
+            bottom: 100px;
+            left: 50px;
+            margin-top: 180px;
+            background-color: #333;
+            z-index: 2;
+        }*/
+
+        .readout {
+            height: 200px;
+            width: 500px;
+            position: absolute;
+            /*border: 1px solid white;*/
+            margin-top: 180px;
+            z-index: 2;
+        }
+        .readout p {
+            color: white;
+            font-size: 12px;
+            line-height: 0;
+        }
+
+
     </style>
 
   </head>
   <body>
 
-    <div id="container">
-        <!-- <div class="progress progress-striped active">
+    <div class="progress progress-striped active">
           <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
             <span class="sr-only">45% Complete</span>
           </div>
@@ -80,10 +135,12 @@
           <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
             <span class="sr-only">65% Complete</span>
           </div>
-        </div> -->
+        </div>
+    <div id="container">
     </div>
 	
-    </div>
+    <div class="countdown"></div>
+    
 
     <script type="x-tmpl" id="tmpl-intro">
         <div class="square">
@@ -118,6 +175,7 @@ require([], function () {
             'model': 'ModelAgent',
             'socket.io': 'socket.io/socket.io',
             'lscache': 'lscache', 
+            'd3': 'd3.min',
 
             'bootstrap': 'bootstrap/js/bootstrap.min',
             'moment': 'moment.min',
@@ -140,7 +198,7 @@ require([], function () {
     // 	console.log('done');
     // });
     require(
-    ['jquery', 'typecast', 'frame', 'model', 'socket.io', 'lscache', 'moment', 
+    ['jquery', 'typecast', 'frame', 'model', 'socket.io', 'lscache', 'moment', 'd3',
         'bootstrap',
         'jquery.center',
         'css!/base/bootstrap/css/bootstrap.min.css',
@@ -151,25 +209,10 @@ require([], function () {
         //    /stylist/forms.css
         //    /bootstrap/font-awesome.min.css
         'css!/media/franklin/stylesheet.css'
-    ], function($, type, Frame, Model, socket, lscache, moment) {
+    ], function($, type, Frame, Model, socket, lscache, moment, d3) {
 
         var $container = $('#container');
         $container.append($('#tmpl-intro').html());
-
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////
-
-        // Connect to the server
-        var io = socket.connect();
 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
@@ -284,21 +327,252 @@ require([], function () {
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
-    var current = 0;
 
     
+
+    //////////////////
+    // time clock
+    var timer = false;
+    var interval = 100;
+    function startTimer(minutes, callback){
+        //adjStatus('energy', .9);
+        var time = minutes * 60 * 1000;
+        var duration = moment.duration(time);
+        var countdown = time;
+        clearTimer();
+        timer = setInterval(function () {
+            //if (Math.floor(countdown) % 120 === 0) incStatus('energy', false); // Reduce engage over time
+            countdown -= interval;
+            var now = moment.duration(countdown);
+            //$('.countdown').text(now.hours() + 'h ' + now.minutes() + 'm ' + now.seconds()+ 's'); 
+            $('.countdown').text(now.minutes() + 'm ' + now.seconds()+ 's'); 
+            var total = now.hours() + now.minutes() + now.seconds();
+            if (total <= 01) {
+                clearTimer();
+                callback();
+            }
+        }, interval);
+    }
+    function clearTimer(){
+        timer = clearTimeout(timer);
+        timer = false;
+    }
+
+    ///////////////////////////////
+    /// GAME MODE
+
+    // Create a data model for the data coming in
+    var MindEvent = Model({ 
+        eSense: { 
+            attention: 0, 
+            meditation: 0 
+        },
+        eegPower: { 
+            delta: 0,
+            theta: 0,
+            lowAlpha: 0,
+            highAlpha: 0,
+            lowBeta: 0,
+            highBeta: 0,
+            lowGamma: 0,
+            highGamma: 0 
+        },
+        poorSignalLevel: 0,
+        blinkStrength: 0 
+    });
+
+    var Profile = Model({
+        id: 123,
+        name: '',
+        color: '',
+        quest: '',
+        history: [],
+        date: 'date'
+    });
+
+    var profile = Profile();
+
+    // Game variables
+    var calm = 0;
+    var attention = 0;
+    var depth = 0;
+    var range = 0;
+    var droppedFrames = 0;
+
+    var health = 100;
+    var power = 0;
+
+    // Connect to the server
+    var io;
+
+    var connectIo = function(fn){
+        io = socket.connect();
+        io.on('connect', function (data) {
+            console.log("web socket connected");
+            if (type.fn(fn)){ fn(); }
+        });
+    }
+    var disconnectIo = function(){
+        io = socket.disconnect();
+    }
+
+    // Game Loop
+
+    $('body').append('<div class="readout"></div>');
+    $('body').append('<div class="meters">'
+        +'<div class="score calm"><div class="inner"></div></div>'
+        +'<div class="score attention"><div class="inner"></div></div>'
+        +'<div class="score depth"><div class="inner"></div></div>'
+        +'<div class="score range"><div class="inner"></div></div>'
+        +'<div class="score health"><div class="inner"></div></div>'
+        +'<div class="score power"><div class="inner"></div></div>'
+        +'<div class="score delta"><div class="inner"></div></div>'
+        +'<div class="score theta"><div class="inner"></div></div>'
+        +'</div>');
+    $('.readout').center();
+
+    var updateDisplay = function(){
+
+        var data = _.last(profile.history) || MindEvent();
+        var output = [];
+        var $display = $('.readout');
+        
+        if (data.blinkStrength > 50) {
+            $display.append('<p>Blink!</p>');
+            droppedFrames++;
+        
+        } else if (data.poorSignalLevel === 200 || data.eSense.attention === 0) {
+            $display.append('<p>No Signal from Headset</p>');
+            droppedFrames++;
+        
+        } else {
+            
+            // Game variables
+            calm = data.eegPower.lowGamma /1000;
+            attention = data.eegPower.highGamma/1000;
+            depth = data.eegPower.lowAlpha/1000;
+            range = data.eegPower.highAlpha/1000;
+            health = data.eegPower.lowBeta/1000;
+            power = data.eegPower.highBeta/1000;
+            delta = data.eegPower.delta/1000;
+            theta = data.eegPower.theta/1000;
+
+            // if (calm > 50) { depth = (calm - 50); }
+            // if (attention > 50) { depth += (attention - 50); }
+
+            // if (calm < 50) { depth = (50 - calm); }
+            // if (attention < 50) { depth += (50 - attention); }
+
+            // // Bumps
+            // if (data.eSense.attention < 20 && data.eSense.meditation < 20) {
+            //     health += 12;
+            // }
+            // else if (data.eSense.attention < 20 || data.eSense.meditation < 20) {
+            //     health += 1;
+            // }
+
+            // if (data.eSense.attention > 90) {
+            //     power += 12;
+            //     power += 12;
+            // }
+            // else if (data.eSense.attention > 80) {
+            //     power += 1;
+            // }
+            
+            // if (data.eSense.meditation > 90) {
+            //     health += 12;
+            // }
+            // else if (data.eSense.meditation > 80) {
+            //     health += 1;
+            // }
+            
+            // health --;
+            // if (health<0) health = 0;
+            // power --;
+            // if (power<0) power = 0;
+
+            var signalToNoise = Math.floor(((profile.history.length - droppedFrames) / profile.history.length) *100)
+
+            // Stats
+            //output.push('Name: '+ profile.name + ' ... Color: '+ profile.color + ' ... Quest: '+ profile.quest);
+            output.push('<hr />');
+            output.push('Signal to Noise: ' + signalToNoise + "%");
+            output.push('Attention Now: ' + data.eSense.attention );                        
+            output.push('Meditation Now: ' + data.eSense.meditation + '<div class="score meditation"><div class="inner"></div></div>');
+            output.push('<hr />');
+            // output.push('Attention Score: ' + attentionLevel);
+            // output.push('Meditation Score: ' + meditationLevel);
+            // output.push('Spacey Score: ' + spaceyLevel);
+            //output.push('<hr />');
+
+            // output main display to the browser
+            if (_.compact(output).length > 0) {
+                output = _.map(output, function(value){
+                    return '<p>'+ value +'</p>'
+                });
+                $display.html(output.join(''));
+            }
+        
+            // show the raw eeg data
+            $display.append(JSON.stringify(data.eegPower));
+    
+            // $('.score.attention .inner').css({'width': (prevAttScore) + "%"});
+            // $('.score.meditation .inner').css({'width': (prevMedScore) + "%"});
+
+            $('.score.calm .inner').animate({'height': (calm) + "%"}, 900);
+            $('.score.attention .inner').animate({'height': (attention) + "%"}, 900);
+            $('.score.depth .inner').animate({'height': (depth) + "%"}, 900);
+            $('.score.range .inner').animate({'height': (range) + "%"}, 900);
+            $('.score.health .inner').animate({'height': (health) + "%"}, 900);
+            $('.score.power .inner').animate({'height': (power) + "%"}, 900);
+            $('.score.delta .inner').animate({'height': (power) + "%"}, 900);
+            $('.score.theta .inner').animate({'height': (power) + "%"}, 900);
+
+        }   
+
+
+    }
+
+    // var graph = graph1();
+    connectIo(function(){});
+
+    var connected = false;
+    var gameOn = false;
+    var current = 0;
     var slide = [
         {
             left: [ '' ],
             right: [ 'Connect to Device', function (){
-                io.emit('adapter:start');
-                console.log('connect');
-                next(); // same as go(1);
+                //io.emit('adapter:start');
+                io.emit('game:start');
+                // console.log('connecting to thinkgear');
+                io.on('mindEvent', function(data){
+                    //console.log(data);
+
+                    if (!connected){
+                        if (data.eSense.attention > 10
+                            && data.eSense.meditation > 10){
+                            io.emit('game:stop', profile.history);
+                            connected = true;
+                            $('.readout').html('Device Connected');
+                            if (current === 0) next();
+                        } else if (data.poorSignalLevel > 0) {
+                            $('.readout').html('Poor Signal: ' + data.poorSignalLevel);
+                            console.log('poor signal: ' + data.poorSignalLevel);
+                        }
+                    } else if (gameOn) {
+                        data = MindEvent(data);
+                        profile.history.push(data);
+                        updateDisplay();
+                    }
+
+                });
+            
             } ]
         },
         {
             left: [ 'Single Player', function(){
-                console.log('two player');
+                console.log('one player');
                 next();
             } ],
             right: [ 'Two Player', function (){
@@ -307,17 +581,38 @@ require([], function () {
         },
         {
             left: [ 'Profile', function(){
-                console.log('two player');
+                console.log('profile');
             } ],
             right: [ 'Play', function (){
-                console.log('two player');
+                console.log('play now!');
                 next();
             } ]
         },
         {
+            left: [''],
+            right: [''],
+            start: function(done){
+                gameOn = true;
+                io.emit('game:start');
+                $('.readout').html('');
+                profile.history = [];
+                console.log('game starts');
+                startTimer(5, function(){
+                    clearTimer();
+                    gameOn = false;
+                    io.emit('game:stop');
+                    $('.readout').html('');
+                    console.log('game complete');
+                    next();
+                });
+
+                done();
+            }
+        },
+        {
             left: [ 'Replay', function(){
-                console.log('two player');
-                next();
+                console.log('replay');
+                go(0);
             } ],
             right: [ 'Save', function (){
                 console.log('two player');
@@ -332,12 +627,27 @@ require([], function () {
         go(current);
     };
     function go(which){
-        var left = slide[which].left;
-        var right = slide[which].right;
-        setButton('left', left[0], left[1]);
-        setButton('right', right[0], right[1]);
+
+        var self = slide[which];
         current = which;
+
+        var setup = function(){
+            var left = self.left;
+            var right = self.right;
+            setButton('left', left[0], left[1]);
+            setButton('right', right[0], right[1]);
+        }
+
+        if (type.fn(self.start)) {
+            self.start(setup);
+        } else {
+            setup();
+        }
+
     };
+
+
+
 
 
     // start
