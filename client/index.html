@@ -118,24 +118,29 @@
             font-size: 12px;
             line-height: 0;
         }
+        div.progress {
+            z-index: 3;
+            margin: 0;
+        }
 
-
+        .floatL { float: left;}
+        .floatR { float: right;}
     </style>
 
   </head>
   <body>
 
-    <div class="progress progress-striped active">
-          <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
-            <span class="sr-only">45% Complete</span>
-          </div>
-        </div>
-    
-        <div class="progress progress-striped active">
-          <div class="progress-bar"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
-            <span class="sr-only">65% Complete</span>
-          </div>
-        </div>
+    <div class="progress meditation" style="width:50%">
+      <div class="progress-bar progress-bar-info"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+        <span class="sr-only">45% Complete</span>
+      </div>
+    </div>
+
+    <div class="progress attention" style="width:50%">
+      <div class="progress-bar progress-bar-danger"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+        <span class="sr-only">65% Complete</span>
+      </div>
+    </div>
     <div id="container">
     </div>
 	
@@ -398,9 +403,13 @@ require([], function () {
     var depth = 0;
     var range = 0;
     var droppedFrames = 0;
-
     var health = 100;
     var power = 0;
+    var delta = 0;
+    var theta = 0;
+
+    var score = 0;
+
 
     // Connect to the server
     var io;
@@ -441,7 +450,7 @@ require([], function () {
             $display.append('<p>Blink!</p>');
             droppedFrames++;
         
-        } else if (data.poorSignalLevel === 200 || data.eSense.attention === 0) {
+        } else if (data.poorSignalLevel === 200 || (data.eSense.meditation === 0 && data.eSense.attention === 0)) {
             $display.append('<p>No Signal from Headset</p>');
             droppedFrames++;
         
@@ -456,6 +465,14 @@ require([], function () {
             power = data.eegPower.highBeta/1000;
             delta = data.eegPower.delta/1000;
             theta = data.eegPower.theta/1000;
+
+
+            if (data.eSense.meditation > 90) {
+                score += 12;
+            } else if (data.eSense.meditation > 80) {
+                score += 1;
+            }
+
 
             // if (calm > 50) { depth = (calm - 50); }
             // if (attention > 50) { depth += (attention - 50); }
@@ -525,8 +542,14 @@ require([], function () {
             $('.score.range .inner').animate({'height': (range) + "%"}, 900);
             $('.score.health .inner').animate({'height': (health) + "%"}, 900);
             $('.score.power .inner').animate({'height': (power) + "%"}, 900);
-            $('.score.delta .inner').animate({'height': (power) + "%"}, 900);
-            $('.score.theta .inner').animate({'height': (power) + "%"}, 900);
+            $('.score.delta .inner').animate({'height': (delta) + "%"}, 900);
+            $('.score.theta .inner').animate({'height': (theta) + "%"}, 900);
+
+            $('.progress.meditation .progress-bar').css({width: (data.eSense.meditation) + "%"}, 900);
+            $('.progress.attention .progress-bar').css({width: (data.eSense.attention) + "%"}, 900);
+
+            setButton('left', score, function(){});
+
 
         }   
 
@@ -548,6 +571,7 @@ require([], function () {
                 // console.log('connecting to thinkgear');
                 io.on('mindEvent', function(data){
                     //console.log(data);
+                    data = MindEvent(data);
 
                     if (!connected){
                         if (data.eSense.attention > 10
@@ -560,8 +584,7 @@ require([], function () {
                             $('.readout').html('Poor Signal: ' + data.poorSignalLevel);
                             console.log('poor signal: ' + data.poorSignalLevel);
                         }
-                    } else if (gameOn) {
-                        data = MindEvent(data);
+                    } else if (gameOn) { 
                         profile.history.push(data);
                         updateDisplay();
                     }
