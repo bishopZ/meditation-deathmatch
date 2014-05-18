@@ -64,7 +64,7 @@
         .power .inner { background: #217a8c; }
 
         .meters {
-            z-index: 1;
+            z-index: 2;
         }
 		.meters .score {
 			display: inline-block;
@@ -74,6 +74,11 @@
 			border-radius: 5px;
 			clear: both;
 		}
+
+        #container {
+            overflow: hidden;
+        }
+
 
         #container .progress {
             margin-bottom: 0px;
@@ -94,16 +99,14 @@
             z-index:4;
         }
 
-        /*svg {
-            height: 200px;
-            width: 700px;
+        svg {
             position: absolute;
             bottom: 100px;
             left: 50px;
-            margin-top: 180px;
-            background-color: #333;
-            z-index: 2;
-        }*/
+            margin-top: 0px;
+            margin-left: -50px;
+            z-index: 1;
+        }
 
         .readout {
             height: 200px;
@@ -145,6 +148,7 @@
     </div>
 	
     <div class="countdown"></div>
+    <div class="graph1"></div>
     
 
     <script type="x-tmpl" id="tmpl-intro">
@@ -175,6 +179,7 @@ require([], function () {
             'jquery': 'jquery/jquery-1.9.1.min',
             'jquery.center': 'jquery/jquery.center.min',
             'underscore': 'underscore-min',
+            'underscore.string': 'underscore.string.min',
             'typecast': 'typecast/typecast.raw', // replace with $.type?
             'frame': 'frame2',
             'model': 'ModelAgent',
@@ -206,6 +211,7 @@ require([], function () {
     ['jquery', 'typecast', 'frame', 'model', 'socket.io', 'lscache', 'moment', 'd3',
         'bootstrap',
         'jquery.center',
+        //'underscore.string',
         'css!/base/bootstrap/css/bootstrap.min.css',
         //'css!bootstrap/css/bootstrap-theme.min.css',
         //    /bootstrap/bootstrap-responsive.min.css
@@ -313,13 +319,6 @@ require([], function () {
             }
         }
 
-
-        // $('.progress')
-            // .css({
-            //     position: 'absolute'
-            // })
-            // .center();
-
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
@@ -333,7 +332,107 @@ require([], function () {
 ////////////////////////////////////////////////////////////
 
 
+    // helpers
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
     
+
+    // the graph
+
+    var graph1 = function(){
+
+        $('.graph1').center().show();
+
+        var n = 2, // number of layers
+            m = 200, // number of samples per layer
+            stack = d3.layout.stack().offset("wiggle"),
+            s1 = d3.range(n).map(function() { return bumpLayer(m); }),
+            s2= d3.range(n).map(function() { return bumpLayer(m); }),
+            layers0 = stack(s1),
+            layers1 = stack(s2);
+
+        var width = 1120,
+            height = 280;
+
+        var x = d3.scale.linear()
+            .domain([0, m - 1])
+            .range([0, width]);
+
+        var y = d3.scale.linear()
+            .domain([0, d3.max(layers0.concat(layers1), function(layer) { return d3.max(layer, function(d) { return d.y0 + d.y; }); })])
+            .range([height, 0]);
+
+        var color = d3.scale.linear()
+            .range(["#aad", "#556"]);
+
+        var area = d3.svg.area()
+            .x(function(d) { return x(d.x); })
+            .y0(function(d) { return y(d.y0); })
+            .y1(function(d) { return y(d.y0 + d.y); });
+
+        var svg = d3.select(".graph1").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        svg.selectAll("path")
+            .data(layers0)
+          .enter().append("path")
+            .attr("d", area)
+            .style("fill", function() { return color(Math.random()); });
+
+        function transition() {
+          d3.selectAll("path")
+              .data(function() {
+                var d = layers1;
+                layers1 = layers0;
+                return layers0 = d;
+              })
+            .transition()
+              .duration(1500)
+              .attr("d", area);
+        }
+
+        // Inspired by Lee Byron's test data generator.
+        function bumpLayer(n) {
+
+            function bump(a) {
+                var x = 1 / (.1 + Math.random()),
+                    y = 2 * Math.random() - .5,
+                    z = 10 / (.1 + Math.random());
+                for (var i = 0; i < n; i++) {
+                  var w = (i / n - y) * z;
+                  a[i] += x * Math.exp(-w * w);
+                }
+            }
+
+            var a = [], i;
+            for (i = 0; i < n; ++i) a[i] = 0;
+            for (i = 0; i < 5; ++i) bump(a);
+            return a.map(function(d, i) { 
+                return {x: i, y: Math.max(0, d)}; 
+            });            
+
+        }
+
+        function update(){
+            //layers1 = stack(getData());
+            layers1 = stack(d3.range(n).map(function() { return bumpLayer(m); }));
+            transition();
+            //console.log(layers1, layers0);
+        }
+
+
+        return {
+            update: update//,
+            //bump: bumpLayer,
+            //transition: transition
+        }
+
+    }
+
+   
+
 
     //////////////////
     // time clock
@@ -499,7 +598,7 @@ require([], function () {
             }
         
             // show the raw eeg data
-            $display.append(JSON.stringify(data.eegPower));
+            //$display.append(JSON.stringify(data.eegPower));
     
             // $('.score.attention .inner').css({'width': (prevAttScore) + "%"});
             // $('.score.meditation .inner').css({'width': (prevMedScore) + "%"});
@@ -516,17 +615,13 @@ require([], function () {
             $('.progress.meditation .progress-bar').css({width: (data.eSense.meditation) + "%"}, 900);
             $('.progress.attention .progress-bar').css({width: (data.eSense.attention) + "%"}, 900);
 
-            setButton('left', score, function(){});
+            setButton('left', numberWithCommas(score), function(){});
 
-
-        }   
-
+        }
 
     }
 
-    // var graph = graph1();
-    connectIo(function(){});
-
+    var graph = graph1();
     var connected = false;
     var gameOn = false;
     var current = 0;
@@ -534,31 +629,33 @@ require([], function () {
         {
             left: [ '' ],
             right: [ 'Connect to Device', function (){
-                //io.emit('adapter:start');
-                io.emit('game:start');
-                // console.log('connecting to thinkgear');
-                io.on('mindEvent', function(data){
-                    //console.log(data);
-                    data = MindEvent(data);
+                connectIo(function(){
+                    //io.emit('adapter:start');
+                    io.emit('game:start');
+                    // console.log('connecting to thinkgear');
+                    io.on('mindEvent', function(data){
+                        //console.log(data);
+                        data = MindEvent(data);
 
-                    if (!connected){
-                        if (data.eSense.attention > 10
-                            && data.eSense.meditation > 10){
-                            io.emit('game:stop', profile.history);
-                            connected = true;
-                            $('.readout').html('Device Connected');
-                            if (current === 0) next();
-                        } else if (data.poorSignalLevel > 0) {
-                            $('.readout').html('Poor Signal: ' + data.poorSignalLevel);
-                            console.log('poor signal: ' + data.poorSignalLevel);
+                        if (!connected){
+                            if (data.eSense.attention > 10
+                                && data.eSense.meditation > 10){
+                                io.emit('game:stop', profile.history);
+                                connected = true;
+                                $('.readout').html('Device Connected');
+                                if (current === 0) next();
+                            } else if (data.poorSignalLevel > 0) {
+                                $('.readout').html('Poor Signal: ' + data.poorSignalLevel);
+                                console.log('poor signal: ' + data.poorSignalLevel);
+                            }
+                        } else if (gameOn) { 
+                            profile.history.push(data);
+                            updateDisplay();
+                            graph.update();
                         }
-                    } else if (gameOn) { 
-                        profile.history.push(data);
-                        updateDisplay();
-                    }
 
+                    });
                 });
-            
             } ]
         },
         {
@@ -602,11 +699,12 @@ require([], function () {
         },
         {
             left: [ 'Replay', function(){
-                console.log('replay');
+                disconnectIo();
+                console.log('todo: replay');
                 go(0);
             } ],
-            right: [ 'Save', function (){
-                console.log('two player');
+            right: [ '', function (){
+                console.log('todo: save');
             } ]
         }
     ];
@@ -638,27 +736,9 @@ require([], function () {
     };
 
 
-
-
-
     // start
     go(0);
 
-        // game state machine
-
-            // Title Screen
-                // Holder Screen
-            // Device Setup
-                // Game Select: Single or Multi
-                // Player Profile
-            // Game
-                // Game Intro
-                // Game Outro
-            // Scorecard
-                // High Scores
-
-            // Networking
-            // Display Mode
     });
 
 });
