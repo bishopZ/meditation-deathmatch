@@ -94,7 +94,7 @@
             position: absolute;
             bottom: 35px;
             left: 20px;
-            font-size: 28px;
+            font-size: 45px;
             color: white;
             z-index:4;
         }
@@ -565,8 +565,8 @@ require([], function () {
             theta = data.eegPower.theta/1000;
 
 
-            if (data.eSense.meditation < 20 && data.eSense.attention < 20) {
-                score += 1;
+            if (data.eSense.meditation < 25 && data.eSense.attention < 25) {
+                score += 2;
             } else if (data.eSense.meditation > 90 && data.eSense.attention > 90) {
                 score += 24;
             } else if (data.eSense.meditation > 90) {
@@ -692,20 +692,23 @@ require([], function () {
                     io.emit('game:stop');
                     $('.readout').html('');
                     console.log('game complete');
-                    next();
+
+                    setButton('right', 'Replay', function(){
+                        window.location.reload();
+                    });
+                    //next();
                 });
 
                 done();
             }
         },
         {
-            left: [ 'Replay', function(){
+            left: [ '', function(){
                 //disconnectIo();
                 //console.log('todo: replay');
-                window.refresh();
                 //go(0);
             } ],
-            right: [ '', function (){
+            right: [ 'Replay', function (){
                 console.log('todo: save');
             } ]
         }
