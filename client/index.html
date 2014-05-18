@@ -467,46 +467,14 @@ require([], function () {
             theta = data.eegPower.theta/1000;
 
 
-            if (data.eSense.meditation > 90) {
+            if (data.eSense.meditation > 90 && data.eSense.attention > 90) {
+                score += 24;
+            } else if (data.eSense.meditation > 90) {
                 score += 12;
             } else if (data.eSense.meditation > 80) {
                 score += 1;
             }
 
-
-            // if (calm > 50) { depth = (calm - 50); }
-            // if (attention > 50) { depth += (attention - 50); }
-
-            // if (calm < 50) { depth = (50 - calm); }
-            // if (attention < 50) { depth += (50 - attention); }
-
-            // // Bumps
-            // if (data.eSense.attention < 20 && data.eSense.meditation < 20) {
-            //     health += 12;
-            // }
-            // else if (data.eSense.attention < 20 || data.eSense.meditation < 20) {
-            //     health += 1;
-            // }
-
-            // if (data.eSense.attention > 90) {
-            //     power += 12;
-            //     power += 12;
-            // }
-            // else if (data.eSense.attention > 80) {
-            //     power += 1;
-            // }
-            
-            // if (data.eSense.meditation > 90) {
-            //     health += 12;
-            // }
-            // else if (data.eSense.meditation > 80) {
-            //     health += 1;
-            // }
-            
-            // health --;
-            // if (health<0) health = 0;
-            // power --;
-            // if (power<0) power = 0;
 
             var signalToNoise = Math.floor(((profile.history.length - droppedFrames) / profile.history.length) *100)
 
@@ -598,12 +566,12 @@ require([], function () {
                 console.log('one player');
                 next();
             } ],
-            right: [ 'Two Player', function (){
+            right: [ '', function (){
                 console.log('two player');
             } ]
         },
         {
-            left: [ 'Profile', function(){
+            left: [ '', function(){
                 console.log('profile');
             } ],
             right: [ 'Play', function (){
