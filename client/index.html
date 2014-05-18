@@ -451,7 +451,7 @@ require([], function () {
             //$('.countdown').text(now.hours() + 'h ' + now.minutes() + 'm ' + now.seconds()+ 's'); 
             $('.countdown').text(now.minutes() + 'm ' + now.seconds()+ 's'); 
             var total = now.hours() + now.minutes() + now.seconds();
-            if (total <= 01) {
+            if (total <= 00) {
                 clearTimer();
                 callback();
             }
@@ -701,6 +701,7 @@ require([], function () {
             left: [ 'Replay', function(){
                 disconnectIo();
                 console.log('todo: replay');
+                window.refresh();
                 go(0);
             } ],
             right: [ '', function (){
