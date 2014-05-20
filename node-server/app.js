@@ -39,7 +39,7 @@ app.use('/', express.static(__dirname + '/../client'));
 
 // Start the Neurosky Connection
 
-var nodeThinkGear = require('./node-neurosky');
+var nodeThinkGear = require('./server/node-neurosky');
 var running = false;
 var connected = false;
 
