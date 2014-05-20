@@ -21,7 +21,7 @@ $ npm install socket.io@1
 $ npm install node-thinkgear
 ```
 
-then start the app by running
+then start the app by running (in the node server folder)
 ```
 $ node app.js
 ```
