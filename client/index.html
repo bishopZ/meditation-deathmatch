@@ -343,7 +343,7 @@ require([], function () {
 
         $('.graph1').center().show();
 
-        var n = 2, // number of layers
+        var n = 3, // number of layers
             m = 200, // number of samples per layer
             stack = d3.layout.stack().offset("wiggle"),
             s1 = d3.range(n).map(function() { return bumpLayer(m); }),
@@ -566,15 +566,17 @@ require([], function () {
 
 
             if (data.eSense.meditation < 25 && data.eSense.attention < 25) {
-                score += 2;
+                score += 3;
             } else if (data.eSense.meditation > 90 && data.eSense.attention > 90) {
                 score += 24;
             } else if (data.eSense.meditation > 90) {
                 score += 12;
             } else if (data.eSense.meditation > 80) {
-                score += 1;
+                score += 2;
             } 
-
+            // else if (data.eSense.meditation > 70) {
+            //     score += 1;
+            // } 
 
             var signalToNoise = Math.floor(((profile.history.length - droppedFrames) / profile.history.length) *100)
 
@@ -686,7 +688,7 @@ require([], function () {
                 $('.readout').html('');
                 profile.history = [];
                 console.log('game starts');
-                startTimer(5, function(){
+                startTimer(3, function(){
                     clearTimer();
                     gameOn = false;
                     io.emit('game:stop');
