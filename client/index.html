@@ -676,18 +676,27 @@ require([], function () {
                 
                 //io.emit('adapter:start');
                 io.emit('game:start');
-                // console.log('connecting to thinkgear');
-                io.on('mindEvent', function(data){
-                    //console.log(data);
+                console.log('connecting to thinkgear');
+                var data1, data2;
+                io.on('mindEvent', function(eventData){
+                   // console.log(eventData);
 
-                    if (type.arr(data)) {
-                        data = data[0];
+                    if (type.arr(eventData)) {
+                        data1 = eventData[0];
+                        data2 = eventData[1];
+                    } else {
+                        data1 = eventData;
+                        data2 = MindEvent();
                     }
-                    data = MindEvent(data);
+                    data1 = MindEvent(data1);
+                    data2 = MindEvent(data2);
+
+                    var data = data1;
 
                     if (!connected){
                         if (data.eSense.attention > 10
-                            && data.eSense.meditation > 10){
+                            && data.eSense.meditation > 10
+                        ){
                             io.emit('game:stop', profile.history);
                             connected = true;
                             $('.readout').html('Device Connected');
@@ -707,19 +716,10 @@ require([], function () {
             } ]
         },
         {
-            left: [ 'Single Player', function(){
-                console.log('one player');
-                next();
-            } ],
-            right: [ '', function (){
-                console.log('two player');
-            } ]
-        },
-        {
             left: [ '', function(){
-                console.log('profile');
+                //console.log('profile');
             } ],
-            right: [ 'Play', function (){
+            right: [ 'Play Now!', function (){
                 console.log('play now!');
                 next();
             } ]
