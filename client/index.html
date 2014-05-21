@@ -578,15 +578,17 @@ require([], function () {
         var $display = $('.readout');
 
         if (data.blinkStrength > 50) {
-            $display.append('<p>Blink!</p>');
+            $display.html('<p>Blink!</p>');
             player.droppedFrames++;
         
         } else if (data.poorSignalLevel === 200 || (data.eSense.meditation === 0 && data.eSense.attention === 0)) {
-            $display.append('<p>No Signal from Headset</p>');
+            $display.html('<p>No Signal from Headset</p>');
             player.droppedFrames++;
         
         } else {
             
+            $display.html('');
+
             // Game variables
             player = _.extend(player, {
                 calm : data.eegPower.lowGamma /1000,
@@ -616,23 +618,23 @@ require([], function () {
 
             // Stats
             //output.push('Name: '+ profile.name + ' ... Color: '+ profile.color + ' ... Quest: '+ profile.quest);
-            output.push('<hr />');
-            output.push('Signal to Noise: ' + signalToNoise + "%");
-            output.push('Attention Now: ' + data.eSense.attention );                        
-            output.push('Meditation Now: ' + data.eSense.meditation + '<div class="score meditation"><div class="inner"></div></div>');
-            output.push('<hr />');
+            // output.push('<hr />');
+            // output.push('Signal to Noise: ' + signalToNoise + "%");
+            // output.push('Attention Now: ' + data.eSense.attention );                        
+            // output.push('Meditation Now: ' + data.eSense.meditation + '<div class="score meditation"><div class="inner"></div></div>');
+            // output.push('<hr />');
             // output.push('Attention Score: ' + attentionLevel);
             // output.push('Meditation Score: ' + meditationLevel);
             // output.push('Spacey Score: ' + spaceyLevel);
             //output.push('<hr />');
 
             // output main display to the browser
-            if (_.compact(output).length > 0) {
-                output = _.map(output, function(value){
-                    return '<p>'+ value +'</p>'
-                });
-                $display.html(output.join(''));
-            }
+            // if (_.compact(output).length > 0) {
+            //     output = _.map(output, function(value){
+            //         return '<p>'+ value +'</p>'
+            //     });
+            //     $display.html(output.join(''));
+            // }
         
             // show the raw eeg data
             //$display.append(JSON.stringify(data.eegPower));
