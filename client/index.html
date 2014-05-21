@@ -47,7 +47,7 @@
             width: 559px;
             /*border: 1px solid #333;*/
         }
-		.meters .score .inner {
+		.meters .score .inner, .meters .score2 .inner {
 			float: left;
 			position: relative;
 			height:100%;
@@ -63,8 +63,19 @@
         .health .inner { background: #3e7d8e; }
         .power .inner { background: #217a8c; }
 
+
+        .score2.calm .inner { background: #d8cec8; }
+        .score2.attention .inner { background: #c4b0a4; }
+        .score2.depth .inner { background: #b7937c; }
+        .score2.range .inner { background: #b27e5f; }
+        .score2.delta .inner { background: #c4b0a4; }
+        .score2.theta .inner { background: #d8cec8; }
+        .score2.health .inner { background: #b26330; }
+        .score2.power .inner { background: #a9522c; }
+
         .meters {
             z-index: 2;
+            height: 200px;
         }
 		.meters .score {
 			display: inline-block;
@@ -74,6 +85,16 @@
 			border-radius: 5px;
 			clear: both;
 		}
+
+        .meters .score2 {
+            display: inline-block;
+            height: 200px;
+            width: 20px;
+            /*border: 1px solid #d8d8d8;*/
+            border-radius: 5px;
+            
+            float: right;
+        }
 
         #container {
             overflow: hidden;
@@ -539,6 +560,14 @@ require([], function () {
         +'<div class="score power"><div class="inner"></div></div>'
         +'<div class="score delta"><div class="inner"></div></div>'
         +'<div class="score theta"><div class="inner"></div></div>'
+        +'<div class="score2 calm"><div class="inner"></div></div>'
+        +'<div class="score2 attention"><div class="inner"></div></div>'
+        +'<div class="score2 depth"><div class="inner"></div></div>'
+        +'<div class="score2 range"><div class="inner"></div></div>'
+        +'<div class="score2 health"><div class="inner"></div></div>'
+        +'<div class="score2 power"><div class="inner"></div></div>'
+        +'<div class="score2 delta"><div class="inner"></div></div>'
+        +'<div class="score2 theta"><div class="inner"></div></div>'
         +'</div>');
     $('.readout').center();
 
@@ -550,11 +579,11 @@ require([], function () {
         
         if (data.blinkStrength > 50) {
             $display.append('<p>Blink!</p>');
-            droppedFrames++;
+            player1.droppedFrames++;
         
         } else if (data.poorSignalLevel === 200 || (data.eSense.meditation === 0 && data.eSense.attention === 0)) {
             $display.append('<p>No Signal from Headset</p>');
-            droppedFrames++;
+            player1.droppedFrames++;
         
         } else {
             
@@ -583,7 +612,7 @@ require([], function () {
             //     score += 1;
             // } 
 
-            var signalToNoise = Math.floor(((profile.history.length - droppedFrames) / profile.history.length) *100)
+            var signalToNoise = Math.floor(((profile.history.length - player1.droppedFrames) / profile.history.length) *100)
 
             // Stats
             //output.push('Name: '+ profile.name + ' ... Color: '+ profile.color + ' ... Quest: '+ profile.quest);
