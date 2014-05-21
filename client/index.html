@@ -495,36 +495,25 @@ require([], function () {
 
     var profile = Profile();
 
-    // Game variables
-    var calm = 0;
-    var attention = 0;
-    var depth = 0;
-    var range = 0;
-    var droppedFrames = 0;
-    var health = 100;
-    var power = 0;
-    var delta = 0;
-    var theta = 0;
+    var GameData = Model({
+        calm: 0,
+        attention: 0,
+        depth: 0,
+        range: 0,
+        droppedFrames: 0,
+        health: 100,
+        power: 0,
+        delta: 0,
+        theta: 0,
+        score: 0
+    });
 
-    var score = 0;
 
+    var player1 = GameData(); 
+    var player2 = GameData(); 
 
-    // Connect to the server
-    var io;
-
-    var connectIo = function(fn){
-        io = socket.connect();
-        io.on('connect', function (data) {
-            console.log("web socket connected");
-            if (type.fn(fn)){ fn(); }
-        });
-    }
-    var disconnectIo = function(){
-        io = socket.disconnect();
-    }
 
     // Game Loop
-
     $('body').append('<div class="readout"></div>');
     $('body').append('<div class="meters">'
         +'<div class="score calm"><div class="inner"></div></div>'
@@ -555,24 +544,25 @@ require([], function () {
         } else {
             
             // Game variables
-            calm = data.eegPower.lowGamma /1000;
-            attention = data.eegPower.highGamma/1000;
-            depth = data.eegPower.lowAlpha/1000;
-            range = data.eegPower.highAlpha/1000;
-            health = data.eegPower.lowBeta/1000;
-            power = data.eegPower.highBeta/1000;
-            delta = data.eegPower.delta/1000;
-            theta = data.eegPower.theta/1000;
-
+            player1 = _.extend(player1, {
+                calm : data.eegPower.lowGamma /1000,
+                attention : data.eegPower.highGamma/1000,
+                depth : data.eegPower.lowAlpha/1000,
+                range : data.eegPower.highAlpha/1000,
+                health : data.eegPower.lowBeta/1000,
+                power : data.eegPower.highBeta/1000,
+                delta : data.eegPower.delta/1000,
+                theta : data.eegPower.theta/1000
+            });
 
             if (data.eSense.meditation < 25 && data.eSense.attention < 25) {
-                score += 3;
+                player1.score += 3;
             } else if (data.eSense.meditation > 90 && data.eSense.attention > 90) {
-                score += 24;
+                player1.score += 24;
             } else if (data.eSense.meditation > 90) {
-                score += 12;
+                player1.score += 12;
             } else if (data.eSense.meditation > 80) {
-                score += 2;
+                player1.score += 2;
             } 
             // else if (data.eSense.meditation > 70) {
             //     score += 1;
@@ -606,23 +596,29 @@ require([], function () {
             // $('.score.attention .inner').css({'width': (prevAttScore) + "%"});
             // $('.score.meditation .inner').css({'width': (prevMedScore) + "%"});
 
-            $('.score.calm .inner').animate({'height': (calm) + "%"}, 900);
-            $('.score.attention .inner').animate({'height': (attention) + "%"}, 900);
-            $('.score.depth .inner').animate({'height': (depth) + "%"}, 900);
-            $('.score.range .inner').animate({'height': (range) + "%"}, 900);
-            $('.score.health .inner').animate({'height': (health) + "%"}, 900);
-            $('.score.power .inner').animate({'height': (power) + "%"}, 900);
-            $('.score.delta .inner').animate({'height': (delta) + "%"}, 900);
-            $('.score.theta .inner').animate({'height': (theta) + "%"}, 900);
+            $('.score.calm .inner').animate({'height': (player1.calm) + "%"}, 900);
+            $('.score.attention .inner').animate({'height': (player1.attention) + "%"}, 900);
+            $('.score.depth .inner').animate({'height': (player1.depth) + "%"}, 900);
+            $('.score.range .inner').animate({'height': (player1.range) + "%"}, 900);
+            $('.score.health .inner').animate({'height': (player1.health) + "%"}, 900);
+            $('.score.power .inner').animate({'height': (player1.power) + "%"}, 900);
+            $('.score.delta .inner').animate({'height': (player1.delta) + "%"}, 900);
+            $('.score.theta .inner').animate({'height': (player1.theta) + "%"}, 900);
 
             $('.progress.meditation .progress-bar').css({width: (data.eSense.meditation) + "%"}, 900);
             $('.progress.attention .progress-bar').css({width: (data.eSense.attention) + "%"}, 900);
 
-            setButton('left', numberWithCommas(score), function(){});
+            setButton('left', numberWithCommas(player1.score), function(){});
 
         }
 
     }
+
+    var io = socket.connect();
+
+    io.on('connect', function (data) {
+        console.log("web socket connected");
+    });
 
     var graph = graph1();
     var connected = false;
@@ -632,33 +628,38 @@ require([], function () {
         {
             left: [ '' ],
             right: [ 'Connect to Device', function (){
-                connectIo(function(){
-                    //io.emit('adapter:start');
-                    io.emit('game:start');
-                    // console.log('connecting to thinkgear');
-                    io.on('mindEvent', function(data){
-                        //console.log(data);
-                        data = MindEvent(data);
+                
+                
+                //io.emit('adapter:start');
+                io.emit('game:start');
+                // console.log('connecting to thinkgear');
+                io.on('mindEvent', function(data){
+                    //console.log(data);
 
-                        if (!connected){
-                            if (data.eSense.attention > 10
-                                && data.eSense.meditation > 10){
-                                io.emit('game:stop', profile.history);
-                                connected = true;
-                                $('.readout').html('Device Connected');
-                                if (current === 0) next();
-                            } else if (data.poorSignalLevel > 0) {
-                                $('.readout').html('Poor Signal: ' + data.poorSignalLevel);
-                                console.log('poor signal: ' + data.poorSignalLevel);
-                            }
-                        } else if (gameOn) { 
-                            profile.history.push(data);
-                            updateDisplay();
-                            graph.update();
+                    if (type.arr(data)) {
+                        data = data[0];
+                    }
+                    data = MindEvent(data);
+
+                    if (!connected){
+                        if (data.eSense.attention > 10
+                            && data.eSense.meditation > 10){
+                            io.emit('game:stop', profile.history);
+                            connected = true;
+                            $('.readout').html('Device Connected');
+                            if (current === 0) next();
+                        } else if (data.poorSignalLevel > 0) {
+                            $('.readout').html('Poor Signal: ' + data.poorSignalLevel);
+                            console.log('poor signal: ' + data.poorSignalLevel);
                         }
+                    } else if (gameOn) { 
+                        profile.history.push(data);
+                        updateDisplay();
+                        graph.update();
+                    }
 
-                    });
                 });
+
             } ]
         },
         {
