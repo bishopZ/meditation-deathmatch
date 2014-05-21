@@ -35,7 +35,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 print 'blink_strength {0}'.format(self.hs.get('blink_strength'))
                 print 'raw data:'
                 print self.hs.get('rawdata')
-                self.emit('fire', 'fire!')
+                self.emit('fire', [1, 2, 3])
             gevent.sleep(1)
     
     def connect_hs(self):
