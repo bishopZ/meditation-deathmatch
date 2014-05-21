@@ -35,7 +35,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 print 'blink_strength {0}'.format(self.hs.get('blink_strength'))
                 print 'raw data:'
                 print self.hs.get('rawdata')
-                self.broadcast_event('announcement', 'fire!')
+                self.emit('fire', 'fire!')
             gevent.sleep(1)
     
     def connect_hs(self):
@@ -63,18 +63,23 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         self.connected = True 
         print 'now connected!'
 
-    def on_nickname(self, nickname):
-        self.request['nicknames'].append(nickname)
-        self.socket.session['nickname'] = nickname
-        self.broadcast_event('announcement', '%s has connected' % nickname)
-        self.broadcast_event('nicknames', self.request['nicknames'])
-        ######################################################################
+    def on_request_connect(self):
         print "will connect"
         gevent.Greenlet.spawn(self.connect_hs)
         gevent.Greenlet.spawn(self.my_loop)
-        ######################################################################
-        # Just have them join a default-named room
-        self.join('main_room')
+
+#    def on_nickname(self, nickname):
+#        self.request['nicknames'].append(nickname)
+#        self.socket.session['nickname'] = nickname
+#        self.broadcast_event('announcement', '%s has connected' % nickname)
+#        self.broadcast_event('nicknames', self.request['nicknames'])
+#        ######################################################################
+#        print "will connect"
+#        gevent.Greenlet.spawn(self.connect_hs)
+#        gevent.Greenlet.spawn(self.my_loop)
+#        ######################################################################
+#        # Just have them join a default-named room
+#        self.join('main_room')
 
     def recv_disconnect(self):
         # Remove nickname from the list.
