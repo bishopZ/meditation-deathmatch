@@ -161,7 +161,7 @@
         <span class="sr-only">45% Complete</span>
       </div>
     </div>
-    <div class="progress meditation2 floatR" style="width:50%">
+    <div class="progress meditation floatR" style="width:50%">
       <div class="progress-bar progress-bar-info"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
         <span class="sr-only">45% Complete</span>
       </div>
@@ -171,7 +171,7 @@
         <span class="sr-only">65% Complete</span>
       </div>
     </div>
-    <div class="progress attention2 floatR" style="width:50%">
+    <div class="progress attention floatR" style="width:50%">
       <div class="progress-bar progress-bar-danger"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
         <span class="sr-only">65% Complete</span>
       </div>
@@ -532,6 +532,7 @@ require([], function () {
     var profile = Profile();
 
     var GameData = Model({
+        id: 0,
         calm: 0,
         attention: 0,
         depth: 0,
@@ -545,9 +546,8 @@ require([], function () {
     });
 
 
-    var player1 = GameData(); 
-    var player2 = GameData(); 
-
+    var player1 = GameData({ id:1 }); 
+    var player2 = GameData({ id:2 }); 
 
     // Game Loop
     $('body').append('<div class="readout"></div>');
@@ -571,24 +571,24 @@ require([], function () {
         +'</div>');
     $('.readout').center();
 
-    var updateDisplay = function(){
+    var updateDisplay = function(data, player){
 
-        var data = _.last(profile.history) || MindEvent();
+        var data = MindEvent(data);
         var output = [];
         var $display = $('.readout');
-        
+
         if (data.blinkStrength > 50) {
             $display.append('<p>Blink!</p>');
-            player1.droppedFrames++;
+            player.droppedFrames++;
         
         } else if (data.poorSignalLevel === 200 || (data.eSense.meditation === 0 && data.eSense.attention === 0)) {
             $display.append('<p>No Signal from Headset</p>');
-            player1.droppedFrames++;
+            player.droppedFrames++;
         
         } else {
             
             // Game variables
-            player1 = _.extend(player1, {
+            player = _.extend(player, {
                 calm : data.eegPower.lowGamma /1000,
                 attention : data.eegPower.highGamma/1000,
                 depth : data.eegPower.lowAlpha/1000,
@@ -599,20 +599,20 @@ require([], function () {
                 theta : data.eegPower.theta/1000
             });
 
-            if (data.eSense.meditation < 25 && data.eSense.attention < 25) {
-                player1.score += 3;
+            if (data.eSense.meditation < 22 && data.eSense.attention < 22) {
+                player.score += 2;
             } else if (data.eSense.meditation > 90 && data.eSense.attention > 90) {
-                player1.score += 24;
+                player.score += 12;
             } else if (data.eSense.meditation > 90) {
-                player1.score += 12;
+                player.score += 11;
             } else if (data.eSense.meditation > 80) {
-                player1.score += 2;
+                player.score += 1;
             } 
             // else if (data.eSense.meditation > 70) {
-            //     score += 1;
+            //     data += 1;
             // } 
 
-            var signalToNoise = Math.floor(((profile.history.length - player1.droppedFrames) / profile.history.length) *100)
+            var signalToNoise = Math.floor(((profile.history.length - player.droppedFrames) / profile.history.length) *100)
 
             // Stats
             //output.push('Name: '+ profile.name + ' ... Color: '+ profile.color + ' ... Quest: '+ profile.quest);
@@ -640,19 +640,34 @@ require([], function () {
             // $('.score.attention .inner').css({'width': (prevAttScore) + "%"});
             // $('.score.meditation .inner').css({'width': (prevMedScore) + "%"});
 
-            $('.score.calm .inner').animate({'height': (player1.calm) + "%"}, 900);
-            $('.score.attention .inner').animate({'height': (player1.attention) + "%"}, 900);
-            $('.score.depth .inner').animate({'height': (player1.depth) + "%"}, 900);
-            $('.score.range .inner').animate({'height': (player1.range) + "%"}, 900);
-            $('.score.health .inner').animate({'height': (player1.health) + "%"}, 900);
-            $('.score.power .inner').animate({'height': (player1.power) + "%"}, 900);
-            $('.score.delta .inner').animate({'height': (player1.delta) + "%"}, 900);
-            $('.score.theta .inner').animate({'height': (player1.theta) + "%"}, 900);
+            var selector = '.score';
+            if (player.id !== 1) {
+                selector = '.score2';
+            }
 
-            $('.progress.meditation .progress-bar').css({width: (data.eSense.meditation) + "%"}, 900);
-            $('.progress.attention .progress-bar').css({width: (data.eSense.attention) + "%"}, 900);
+            $(selector+'.calm .inner').animate({'height': (player.calm) + "%"}, 900);
+            $(selector+'.attention .inner').animate({'height': (player.attention) + "%"}, 900);
+            $(selector+'.depth .inner').animate({'height': (player.depth) + "%"}, 900);
+            $(selector+'.range .inner').animate({'height': (player.range) + "%"}, 900);
+            $(selector+'.health .inner').animate({'height': (player.health) + "%"}, 900);
+            $(selector+'.power .inner').animate({'height': (player.power) + "%"}, 900);
+            $(selector+'.delta .inner').animate({'height': (player.delta) + "%"}, 900);
+            $(selector+'.theta .inner').animate({'height': (player.theta) + "%"}, 900);
 
-            setButton('left', numberWithCommas(player1.score), function(){});
+            selector = '.floatL';
+            if (player.id !== 1) {
+                selector = '.floatR';
+            }
+
+            $(selector+'.meditation .progress-bar').css({width: (data.eSense.meditation) + "%"}, 900);
+            $(selector+'.attention .progress-bar').css({width: (data.eSense.attention) + "%"}, 900);
+
+            selector = 'left';
+            if (player.id !== 1) {
+                selector = 'right';
+            }
+
+            setButton(selector, numberWithCommas(player.score), function(){});
 
         }
 
@@ -682,32 +697,29 @@ require([], function () {
                    // console.log(eventData);
 
                     if (type.arr(eventData)) {
-                        data1 = eventData[0];
-                        data2 = eventData[1];
+                        data1 = MindEvent(eventData[0]);
+                        data2 = MindEvent(eventData[1]);
                     } else {
-                        data1 = eventData;
+                        data1 = MindEvent(eventData);
                         data2 = MindEvent();
                     }
-                    data1 = MindEvent(data1);
-                    data2 = MindEvent(data2);
-
-                    var data = data1;
-
+    
                     if (!connected){
-                        if (data.eSense.attention > 10
-                            && data.eSense.meditation > 10
+                        if (data1.eSense.attention > 10
+                            && data1.eSense.meditation > 10
                         ){
                             io.emit('game:stop', profile.history);
                             connected = true;
                             $('.readout').html('Device Connected');
                             if (current === 0) next();
-                        } else if (data.poorSignalLevel > 0) {
-                            $('.readout').html('Poor Signal: ' + data.poorSignalLevel);
-                            console.log('poor signal: ' + data.poorSignalLevel);
+                        } else if (data1.poorSignalLevel > 0) {
+                            $('.readout').html('Poor Signal: ' + data1.poorSignalLevel);
+                            console.log('poor signal: ' + data1.poorSignalLevel);
                         }
                     } else if (gameOn) { 
-                        profile.history.push(data);
-                        updateDisplay();
+                        profile.history.push(eventData);
+                        updateDisplay(data1, player1);
+                        updateDisplay(data2, player2);
                         graph.update();
                     }
 

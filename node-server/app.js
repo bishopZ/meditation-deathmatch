@@ -63,7 +63,9 @@ var startConnector = function(){
 			tgClient.on('data',function(data){
 				// send it to the client browser
 				if (running) { 
-					io.emit('mindEvent', data); 
+					// send it twice in an array
+					// to simulate two player mode!!!!
+					io.emit('mindEvent', [data, data]); 
 				}
 				//console.log(data);		
 			});
