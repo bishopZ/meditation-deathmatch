@@ -16,8 +16,8 @@ def raw_to_spectrum(rawdata):
 
 if __name__ == "__main__":
     if platform.system() == 'Darwin':
-        hs1 = headset.Headset('/dev/tty.MindWaveMobile-DevA')
-        hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA-1')
+        hs1 = headset.Headset('/dev/tty.MindWaveMobile-DevA-1')
+        hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA')
     else:
         hs1 = headset.Headset('/dev/ttyUSB0')
         hs2 = headset.Headset('/dev/ttyUSB1')
