@@ -140,7 +140,7 @@ class Application(object):
             return ['<h1>Welcome. '
                 'Try the <a href="/chat.html">chat</a> example.</h1>']
 
-        if path.startswith('static/') or path == 'chat.html':
+        if path.startswith('client/') or path == 'chat.html':
             try:
                 data = open(path).read()
             except Exception:
