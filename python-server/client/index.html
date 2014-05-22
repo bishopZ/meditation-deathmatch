@@ -692,11 +692,11 @@ require([], function () {
                 
                 
                 //io.emit('adapter:start');
-                io.emit('game:start');
+                io.emit('request_connect');
                 console.log('connecting to thinkgear');
                 var data1, data2;
                 io.on('mindEvent', function(eventData){
-                   // console.log(eventData);
+                    console.log(eventData);
 
                     if (type.arr(eventData)) {
                         data1 = MindEvent(eventData[0]);
@@ -750,7 +750,7 @@ require([], function () {
                 startTimer(3, function(){
                     clearTimer();
                     gameOn = false;
-                    io.emit('game:stop');
+                    //io.emit('game:stop');
                     $('.readout').html('');
                     console.log('game complete');
 
