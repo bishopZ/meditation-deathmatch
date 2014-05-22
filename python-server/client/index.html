@@ -675,7 +675,7 @@ require([], function () {
 
     }
 
-    var io = socket.connect();
+    var io = window.io.connect();
 
     io.on('connect', function (data) {
         console.log("web socket connected");
