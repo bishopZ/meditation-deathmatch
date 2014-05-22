@@ -373,6 +373,8 @@ require([], function () {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
     
+    // var snd = new Audio("file.wav"); // buffers automatically when created
+    // snd.play();
 
     // the graph
 
@@ -570,6 +572,7 @@ require([], function () {
         +'<div class="score2 delta"><div class="inner"></div></div>'
         +'<div class="score2 theta"><div class="inner"></div></div>'
         +'</div>');
+
     $('.readout').center();
 
     var updateDisplay = function(data, player){
@@ -755,9 +758,15 @@ require([], function () {
                     $('.readout').html('');
                     console.log('game complete');
 
-                    setButton('right', 'Replay', function(){
-                        window.location.reload();
-                    });
+                    gameOn = false;
+
+                    // setButton('right', 'Replay', function(){
+                    //     window.location.reload();
+                    // });
+        
+                    // add a text box
+                    // put the whole history in there
+        
                     //next();
                 });
 
@@ -766,12 +775,11 @@ require([], function () {
         },
         {
             left: [ '', function(){
-                //disconnectIo();
-                //console.log('todo: replay');
-                //go(0);
+                
             } ],
             right: [ 'Replay', function (){
                 console.log('todo: save');
+                go(0);
             } ]
         }
     ];
