@@ -122,11 +122,11 @@
 
         svg {
             position: absolute;
-            top: 300px;
+            bottom: -200px;
             left: 50px;
             margin-left: -50px;
             z-index: 1;
-            display:none;
+            /*display:none;*/
         }
 
         .readout {
@@ -291,7 +291,8 @@ require([], function () {
                 'font-size': '50px',
                 'padding-top': '5px',
                 'border-radius': '20px',
-                'margin-left': -140
+                'margin-left': -140,
+                'z-index': 6
             })
             .center({
                 against : 'parent',
@@ -303,7 +304,8 @@ require([], function () {
                 'font-size': '50px',
                 'padding-top': '5px',
                 'border-radius': '20px',
-                'margin-left': 140
+                'margin-left': 140,
+                'z-index': 6
             })
             .center({
                 against : 'parent',
@@ -391,7 +393,7 @@ require([], function () {
             layers1 = stack(s2);
 
         var width = 1120,
-            height = 280;
+            height = 240;
 
         var x = d3.scale.linear()
             .domain([0, m - 1])
