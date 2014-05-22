@@ -200,14 +200,14 @@
         </div>
     </script>
 
-  	<script src="./base/require/require.js"></script> 
+  	<script src="./client/base/require/require.js"></script> 
     <script>
 
 // same as on document ready
 require([], function () {
 
     require.config({
-        baseUrl: './base/',
+        baseUrl: './client/base/',
         paths: {
 
             'modernizr': 'modernizr-2.0.6.min',
@@ -247,14 +247,14 @@ require([], function () {
         'bootstrap',
         'jquery.center',
         //'underscore.string',
-        'css!/base/bootstrap/css/bootstrap.min.css',
+        'css!/client/base/bootstrap/css/bootstrap.min.css',
         //'css!bootstrap/css/bootstrap-theme.min.css',
         //    /bootstrap/bootstrap-responsive.min.css
         'css!stylist/style.css',
         //    /stylist/layout.css
         //    /stylist/forms.css
         //    /bootstrap/font-awesome.min.css
-        'css!/media/franklin/stylesheet.css'
+        'css!/client/media/franklin/stylesheet.css'
     ], function($, type, Frame, Model, socket, lscache, moment, d3) {
 
         var $container = $('#container');
