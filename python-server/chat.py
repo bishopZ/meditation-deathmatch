@@ -23,25 +23,25 @@ def raw_to_spectrum(rawdata):
 
 class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
-    hs = {}
+    hs1 = {}
+    hs2 = {}
     connected = False
 
     def my_loop(self):
         while True:
             if (self.connected):
                 print "fire!"
+                t = time.time()
                 #print 'attention {0}, meditation {1}'.format(self.hs.get('attention'), self.hs.get('meditation'))
                 #print 'alpha_waves {0}'.format(self.hs.get('alpha_waves'))
                 #print 'blink_strength {0}'.format(self.hs.get('blink_strength'))
                 #print 'raw data:'
                 #print self.hs.get('rawdata')
-                t = time.time()
-                waves_vector = self.hs.get('waves_vector')
-                meditation = self.hs.get('meditation')
-                attention = self.hs.get('attention')
-                spectrum = raw_to_spectrum(self.hs.get('rawdata')).tolist()
-            
-                packet = {
+                waves_vector = self.hs1.get('waves_vector')
+                meditation = self.hs1.get('meditation')
+                attention = self.hs1.get('attention')
+                spectrum = raw_to_spectrum(self.hs1.get('rawdata')).tolist()
+                packet1 = {
                   'timestamp': t,
                   'raw_spectrum': spectrum,
                   'eSense': {
@@ -59,33 +59,69 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                     'highGamma': waves_vector[7]
                   }
                 }
-                
-                packets = [packet, packet]
+                waves_vector = self.hs2.get('waves_vector')
+                meditation = self.hs2.get('meditation')
+                attention = self.hs2.get('attention')
+                spectrum = raw_to_spectrum(self.hs2.get('rawdata')).tolist()
+                packet2 = {
+                  'timestamp': t,
+                  'raw_spectrum': spectrum,
+                  'eSense': {
+                    'meditation': meditation,
+                    'attention': attention,
+                  },
+                  'eegPower' : {
+                    'delta': waves_vector[0],
+                    'theta': waves_vector[1],
+                    'lowAlpha': waves_vector[2],
+                    'highAlpha': waves_vector[3],
+                    'lowBeta': waves_vector[4],
+                    'highBeta': waves_vector[5],
+                    'lowGamma': waves_vector[6],
+                    'highGamma': waves_vector[7]
+                  }
+                }
+                packets = [packet1, packet2]
                 self.emit('mindEvent', packets)
             gevent.sleep(1)
     
     def connect_hs(self):
-        print "a"
         if platform.system() == 'Darwin':
-            self.hs = headset.Headset('/dev/tty.MindWaveMobile-DevA')
-            print "b"
+              self.hs1 = headset.Headset('/dev/tty.MindWaveMobile-DevA-1')
         else:
-            self.hs = headset.Headset('/dev/ttyUSB0')
-        print "c"
+            self.hs1 = headset.Headset('/dev/ttyUSB0')
         gevent.sleep(1)
-        print "d"
-        if self.hs.get_state() != 'connected':
-            self.hs.disconnect()
-            print "e"
-        print "f"
-        while self.hs.get_state() != 'connected':
-            print "g"
+        if self.hs1.get_state() != 'connected':
+            self.hs1.disconnect()
+  
+  
+        if platform.system() == 'Darwin':
+              self.hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA')
+        else:
+            self.hs2 = headset.Headset('/dev/ttyUSB0')
+        gevent.sleep(1)
+        if self.hs2.get_state() != 'connected':
+            self.hs2.disconnect()
+  
+  
+        while self.hs1.get_state() != 'connected':
             gevent.sleep(1)
-            print "h"
-            print 'current state: {0}'.format(self.hs.get_state())
-            if (self.hs.get_state() == 'standby'):
-                print 'trying to connect...'
-                self.hs.connect()
+            print 'current state hs2: {0}'.format(self.hs1.get_state())
+            if (self.hs1.get_state() == 'standby'):
+                print 'trying to connect hs2...'
+                self.hs1.connect()
+  
+  
+        while self.hs2.get_state() != 'connected':
+            gevent.sleep(1)
+            self.hs2.destroy()
+            self.hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA')
+            gevent.sleep(1)
+            print 'current state hs2: {0}'.format(self.hs2.get_state())
+            if (self.hs2.get_state() == 'standby'):
+                print 'trying to connect hs2...'
+                self.hs2.connect()
+  
         self.connected = True 
         print 'now connected!'
 
