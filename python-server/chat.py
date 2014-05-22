@@ -30,12 +30,38 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         while True:
             if (self.connected):
                 print "fire!"
-                print 'attention {0}, meditation {1}'.format(self.hs.get('attention'), self.hs.get('meditation'))
-                print 'alpha_waves {0}'.format(self.hs.get('alpha_waves'))
-                print 'blink_strength {0}'.format(self.hs.get('blink_strength'))
-                print 'raw data:'
-                print self.hs.get('rawdata')
-                self.emit('fire', 'fire!')
+                #print 'attention {0}, meditation {1}'.format(self.hs.get('attention'), self.hs.get('meditation'))
+                #print 'alpha_waves {0}'.format(self.hs.get('alpha_waves'))
+                #print 'blink_strength {0}'.format(self.hs.get('blink_strength'))
+                #print 'raw data:'
+                #print self.hs.get('rawdata')
+                t = time.time()
+                waves_vector = self.hs.get('waves_vector')
+                meditation = self.hs.get('meditation')
+                attention = self.hs.get('attention')
+                spectrum = raw_to_spectrum(self.hs.get('rawdata')).tolist()
+            
+                packet = {
+                  'timestamp': t,
+                  'raw_spectrum': spectrum,
+                  'eSense': {
+                    'meditation': meditation,
+                    'attention': attention,
+                  },
+                  'eegPower' : {
+                    'delta': waves_vector[0],
+                    'theta': waves_vector[1],
+                    'lowAlpha': waves_vector[2],
+                    'highAlpha': waves_vector[3],
+                    'lowBeta': waves_vector[4],
+                    'highBeta': waves_vector[5],
+                    'lowGamma': waves_vector[6],
+                    'highGamma': waves_vector[7]
+                  }
+                }
+                
+                packets = [packet, packet]
+                self.emit('mindEvent', packets)
             gevent.sleep(1)
     
     def connect_hs(self):

@@ -46,6 +46,11 @@ socket.on('error', function (e) {
     message('System', e ? e : 'A unknown error occurred');
 });
 
+socket.on('mindEvent', function(msg){
+  message('mindEvent', JSON.stringify(msg));
+});
+
+
 function message (from, msg) {
     $('#lines').append($('<p>').append($('<b>').text(from), msg));
 }
