@@ -40,6 +40,8 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 waves_vector = self.hs1.get('waves_vector')
                 meditation = self.hs1.get('meditation')
                 attention = self.hs1.get('attention')
+                poor_signal = self.hs1.get('poor_signal')
+                print 'poor_signal {0}'.format(poor_signal)
                 spectrum = raw_to_spectrum(self.hs1.get('rawdata')).tolist()
                 packet1 = {
                   'timestamp': t,
@@ -57,11 +59,13 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                     'highBeta': waves_vector[5],
                     'lowGamma': waves_vector[6],
                     'highGamma': waves_vector[7]
-                  }
+                  },
+                  'poorSignalLevel': poor_signal
                 }
                 waves_vector = self.hs2.get('waves_vector')
                 meditation = self.hs2.get('meditation')
                 attention = self.hs2.get('attention')
+                poor_signal = self.hs2.get('poor_signal')
                 spectrum = raw_to_spectrum(self.hs2.get('rawdata')).tolist()
                 packet2 = {
                   'timestamp': t,
@@ -79,7 +83,8 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                     'highBeta': waves_vector[5],
                     'lowGamma': waves_vector[6],
                     'highGamma': waves_vector[7]
-                  }
+                  },
+                  'poorSignalLevel': poor_signal
                 }
                 packets = [packet1, packet2]
                 self.emit('mindEvent', packets)
