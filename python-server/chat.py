@@ -92,7 +92,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
     
     def connect_hs(self):
         if platform.system() == 'Darwin':
-              self.hs1 = headset.Headset('/dev/tty.MindWaveMobile-DevA-1')
+              self.hs1 = headset.Headset('/dev/tty.MindWaveMobile-DevA-3')
         else:
             self.hs1 = headset.Headset('/dev/ttyUSB0')
         gevent.sleep(1)
@@ -101,7 +101,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
   
   
         if platform.system() == 'Darwin':
-              self.hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA')
+              self.hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA-4')
         else:
             self.hs2 = headset.Headset('/dev/ttyUSB0')
         gevent.sleep(1)
