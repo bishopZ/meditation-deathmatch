@@ -122,11 +122,11 @@
 
         svg {
             position: absolute;
-            bottom: -20px;
+            top: 300px;
             left: 50px;
             margin-left: -50px;
             z-index: 1;
-            /*display:none;*/
+            display:none;
         }
 
         .readout {
@@ -291,8 +291,7 @@ require([], function () {
                 'font-size': '50px',
                 'padding-top': '5px',
                 'border-radius': '20px',
-                'margin-left': -140,
-                'z-index': 6
+                'margin-left': -140
             })
             .center({
                 against : 'parent',
@@ -304,8 +303,7 @@ require([], function () {
                 'font-size': '50px',
                 'padding-top': '5px',
                 'border-radius': '20px',
-                'margin-left': 140,
-                'z-index': 6
+                'margin-left': 140
             })
             .center({
                 against : 'parent',
@@ -375,8 +373,6 @@ require([], function () {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
     
-    // var snd = new Audio("file.wav"); // buffers automatically when created
-    // snd.play();
 
     // the graph
 
@@ -393,7 +389,7 @@ require([], function () {
             layers1 = stack(s2);
 
         var width = 1120,
-            height = 240;
+            height = 280;
 
         var x = d3.scale.linear()
             .domain([0, m - 1])
@@ -574,7 +570,6 @@ require([], function () {
         +'<div class="score2 delta"><div class="inner"></div></div>'
         +'<div class="score2 theta"><div class="inner"></div></div>'
         +'</div>');
-
     $('.readout').center();
 
     var updateDisplay = function(data, player){
@@ -758,23 +753,12 @@ require([], function () {
                     gameOn = false;
                     //io.emit('game:stop');
                     $('.readout').html('');
+                    io.emit('request_disconnect');
                     console.log('game complete');
 
-<<<<<<< HEAD
                     // setButton('right', 'Replay', function(){
                         // window.location.reload();
                     // });
-=======
-                    gameOn = false;
-
-                    // setButton('right', 'Replay', function(){
-                    //     window.location.reload();
-                    // });
-        
-                    // add a text box
-                    // put the whole history in there
-        
->>>>>>> 8abd5be8ae3194e39ecdab3164840f57a44afde2
                     //next();
                 });
 
@@ -783,11 +767,12 @@ require([], function () {
         },
         {
             left: [ '', function(){
-                
+                //disconnectIo();
+                //console.log('todo: replay');
+                //go(0);
             } ],
             right: [ 'Replay', function (){
                 console.log('todo: save');
-                go(0);
             } ]
         }
     ];

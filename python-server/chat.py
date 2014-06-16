@@ -26,6 +26,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
     hs1 = {}
     hs2 = {}
     connected = False
+    loop_greenlet = ''
 
     def my_loop(self):
         while True:
@@ -90,42 +91,39 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 self.emit('mindEvent', packets)
             gevent.sleep(1)
     
-    def connect_hs(self):
-        if platform.system() == 'Darwin':
-              self.hs1 = headset.Headset('/dev/tty.MindWaveMobile-DevA-3')
-        else:
-            self.hs1 = headset.Headset('/dev/ttyUSB0')
-        gevent.sleep(1)
-        if self.hs1.get_state() != 'connected':
+    def disconnect_hs(self):
+        if (self.connected):
             self.hs1.disconnect()
-  
-  
-        if platform.system() == 'Darwin':
-              self.hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA-4')
-        else:
-            self.hs2 = headset.Headset('/dev/ttyUSB0')
-        gevent.sleep(1)
-        if self.hs2.get_state() != 'connected':
             self.hs2.disconnect()
-  
+            self.hs1.dongle_fs.close()
+            self.hs2.dongle_fs.close()
+            self.connected = False
+
+    def connect_hs(self):
+        self.hs1 = headset.Headset('/dev/tty.MindWaveMobile-DevA-1')
+        self.hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA')
+        self.hs1.disconnect()
+        self.hs2.disconnect()
+        settings1 = self.hs1.dongle_fs.getSettingsDict()
+        settings2 = self.hs2.dongle_fs.getSettingsDict()
+        for i in xrange(2):
+            settings1['rtscts'] = not settings1['rtscts']
+            settings2['rtscts'] = not settings2['rtscts']
+            self.hs1.dongle_fs.applySettingsDict(settings1)
+            self.hs2.dongle_fs.applySettingsDict(settings2)
+        gevent.sleep(2)
+        self.hs1.connect()
+        self.hs2.connect()
   
         while self.hs1.get_state() != 'connected':
             gevent.sleep(1)
-            print 'current state hs2: {0}'.format(self.hs1.get_state())
-            if (self.hs1.get_state() == 'standby'):
-                print 'trying to connect hs2...'
-                self.hs1.connect()
-  
+            print 'current state hs1: {0}'.format(self.hs1.get_state())
+        print 'hs1 connected'
   
         while self.hs2.get_state() != 'connected':
             gevent.sleep(1)
-            self.hs2.destroy()
-            self.hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA')
-            gevent.sleep(1)
             print 'current state hs2: {0}'.format(self.hs2.get_state())
-            if (self.hs2.get_state() == 'standby'):
-                print 'trying to connect hs2...'
-                self.hs2.connect()
+        print 'hs2 connected'
   
         self.connected = True 
         print 'now connected!'
@@ -133,20 +131,13 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
     def on_request_connect(self):
         print "will connect"
         gevent.Greenlet.spawn(self.connect_hs)
-        gevent.Greenlet.spawn(self.my_loop)
+        self.loop_greenlet = gevent.Greenlet.spawn(self.my_loop)
 
-#    def on_nickname(self, nickname):
-#        self.request['nicknames'].append(nickname)
-#        self.socket.session['nickname'] = nickname
-#        self.broadcast_event('announcement', '%s has connected' % nickname)
-#        self.broadcast_event('nicknames', self.request['nicknames'])
-#        ######################################################################
-#        print "will connect"
-#        gevent.Greenlet.spawn(self.connect_hs)
-#        gevent.Greenlet.spawn(self.my_loop)
-#        ######################################################################
-#        # Just have them join a default-named room
-#        self.join('main_room')
+    def on_request_disconnect(self):
+        print "will disconnect"
+        if ('kill' in dir(self.loop_greenlet)):
+          self.loop_greenlet.kill()
+        self.disconnect_hs()
 
     def recv_disconnect(self):
         # Remove nickname from the list.
