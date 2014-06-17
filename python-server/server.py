@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from gevent import monkey; monkey.patch_all()
 
 from socketio import socketio_manage
@@ -12,21 +14,19 @@ import sys, time
 from pymindwave import headset
 from pymindwave.pyeeg import bin_power
 
-
-def raw_to_spectrum(rawdata):
-    flen = 50
-    spectrum, relative_spectrum = bin_power(rawdata, range(flen), 512)
-    return spectrum
-
 ##########################################################
 
-
-class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
+class GameNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
     hs1 = {}
     hs2 = {}
     connected = False
     loop_greenlet = ''
+
+    def raw_to_spectrum(rawdata):
+        flen = 50
+        spectrum, relative_spectrum = bin_power(rawdata, range(flen), 512)
+        return spectrum
 
     def my_loop(self):
         while True:
@@ -43,7 +43,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 attention = self.hs1.get('attention')
                 poor_signal = self.hs1.get('poor_signal')
                 print 'poor_signal {0}'.format(poor_signal)
-                spectrum = raw_to_spectrum(self.hs1.get('rawdata')).tolist()
+                spectrum = self.raw_to_spectrum(self.hs1.get('rawdata')).tolist()
                 packet1 = {
                   'timestamp': t,
                   'raw_spectrum': spectrum,
@@ -67,7 +67,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 meditation = self.hs2.get('meditation')
                 attention = self.hs2.get('attention')
                 poor_signal = self.hs2.get('poor_signal')
-                spectrum = raw_to_spectrum(self.hs2.get('rawdata')).tolist()
+                spectrum = self.raw_to_spectrum(self.hs2.get('rawdata')).tolist()
                 packet2 = {
                   'timestamp': t,
                   'raw_spectrum': spectrum,
@@ -139,23 +139,7 @@ class ChatNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
           self.loop_greenlet.kill()
         self.disconnect_hs()
 
-    def recv_disconnect(self):
-        # Remove nickname from the list.
-        nickname = self.socket.session['nickname']
-        self.request['nicknames'].remove(nickname)
-        self.broadcast_event('announcement', '%s has disconnected' % nickname)
-        self.broadcast_event('nicknames', self.request['nicknames'])
-
-        self.disconnect(silent=True)
-
-    def on_user_message(self, msg):
-        self.emit_to_room('main_room', 'msg_to_room',
-            self.socket.session['nickname'], msg)
-
-    def recv_message(self, message):
-        print "PING!!!", message
-
-class Application(object):
+class SocketApp(object):
     def __init__(self):
         self.buffer = []
         # Dummy request object to maintain state between Namespace
@@ -176,7 +160,7 @@ class Application(object):
             try:
                 data = open(path).read()
             except Exception:
-                return not_found(start_response)
+                return self.not_found(start_response)
 
             if path.endswith(".js"):
                 content_type = "text/javascript"
@@ -191,17 +175,17 @@ class Application(object):
             return [data]
 
         if path.startswith("socket.io"):
-            socketio_manage(environ, {'': ChatNamespace}, self.request)
+            socketio_manage(environ, {'': GameNamespace}, self.request)
         else:
-            return not_found(start_response)
+            return self.not_found(start_response)
 
+    def not_found(start_response):
+        start_response('404 Not Found', [])
+        return ['<h1>Not Found</h1>']
 
-def not_found(start_response):
-    start_response('404 Not Found', [])
-    return ['<h1>Not Found</h1>']
 
 if __name__ == '__main__':
     print 'Listening on port 8080 and on port 843 (flash policy server)'
-    SocketIOServer(('0.0.0.0', 8080), Application(),
+    SocketIOServer(('0.0.0.0', 8080), SocketApp(),
         resource="socket.io", policy_server=True,
         policy_listener=('0.0.0.0', 10843)).serve_forever()

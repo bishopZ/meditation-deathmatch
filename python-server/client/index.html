@@ -602,18 +602,13 @@ require([], function () {
                 theta : data.eegPower.theta/1000
             });
 
-            if (data.eSense.meditation < 22 && data.eSense.attention < 22) {
-                player.score += 2;
-            } else if (data.eSense.meditation > 90 && data.eSense.attention > 90) {
-                player.score += 12;
-            } else if (data.eSense.meditation > 90) {
-                player.score += 11;
+            if (data.eSense.meditation > 90) {
+                player.score += 15;
             } else if (data.eSense.meditation > 80) {
+                player.score += 3;
+            } else if (data.eSense.meditation > 75) {
                 player.score += 1;
             } 
-            // else if (data.eSense.meditation > 70) {
-            //     data += 1;
-            // } 
 
             var signalToNoise = Math.floor(((profile.history.length - player.droppedFrames) / profile.history.length) *100)
 
