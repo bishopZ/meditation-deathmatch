@@ -28,7 +28,7 @@ class GameNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
     connected = False
     loop_greenlet = ''
 
-    def raw_to_spectrum(rawdata):
+    def raw_to_spectrum(self, rawdata):
         flen = 50
         spectrum, relative_spectrum = bin_power(rawdata, range(flen), 512)
         return spectrum

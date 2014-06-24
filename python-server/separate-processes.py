@@ -23,7 +23,7 @@ class gameServer(QThread):
 
   def run(self):
     self.abort = False
-    self.child = pexpect.spawn("./server.py")
+    self.child = pexpect.spawn("./standalone-server.py")
     ret = self.child.expect("Listening on port")
     self.emit(self.sig1, "ready")
     while (not self.abort):
@@ -60,3 +60,4 @@ web.show()
 web.raise_()
 #web.showFullScreen()
 sys.exit(app.exec_())
+
