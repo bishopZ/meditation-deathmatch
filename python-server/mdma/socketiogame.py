@@ -1,25 +1,62 @@
-#!/usr/bin/env python
-
-from PyQt4 import Qt, QtCore, QtGui
-import qtgevent
-qtgevent.install()
-import gevent
 from gevent import monkey; monkey.patch_all()
+import gevent
 
-from socketio import socketio_manage
-from socketio.server import SocketIOServer
 from socketio.namespace import BaseNamespace
 from socketio.mixins import RoomsMixin, BroadcastMixin
 
 from pymindwave import headset
 from pymindwave.pyeeg import bin_power
 
-import sys, time
-import pexpect 
+##
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtWebKit import *
+from socketio import socketio_manage
+
+class SocketApp(object):
+    def __init__(self):
+        self.buffer = []
+        # Dummy request object to maintain state between Namespace
+        # initialization.
+        self.request = {
+            'nicknames': [],
+        }
+
+    def __call__(self, environ, start_response):
+        path = environ['PATH_INFO'].strip('/')
+
+        if not path:
+            start_response('200 OK', [('Content-Type', 'text/html')])
+            return ['<h1>Welcome. '
+                'Try the <a href="/chat.html">chat</a> example.</h1>']
+
+        if path.startswith('client/') or path == 'chat.html':
+            try:
+                data = open(path).read()
+            except Exception:
+                return self.not_found(start_response)
+
+            if path.endswith(".js"):
+                content_type = "text/javascript"
+            elif path.endswith(".css"):
+                content_type = "text/css"
+            elif path.endswith(".swf"):
+                content_type = "application/x-shockwave-flash"
+            else:
+                content_type = "text/html"
+
+            start_response('200 OK', [('Content-Type', content_type)])
+            return [data]
+
+        if path.startswith("socket.io"):
+            socketio_manage(environ, {'': GameNamespace}, self.request)
+        else:
+            return self.not_found(start_response)
+
+    def not_found(self, start_response):
+        start_response('404 Not Found', [])
+        return ['<h1>Not Found</h1>']
+
+
+
 
 class GameNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
@@ -37,7 +74,6 @@ class GameNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         while True:
             if (self.connected):
                 print "fire!"
-                t = time.time()
                 #print 'attention {0}, meditation {1}'.format(self.hs.get('attention'), self.hs.get('meditation'))
                 #print 'alpha_waves {0}'.format(self.hs.get('alpha_waves'))
                 #print 'blink_strength {0}'.format(self.hs.get('blink_strength'))
@@ -143,82 +179,3 @@ class GameNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         if ('kill' in dir(self.loop_greenlet)):
           self.loop_greenlet.kill()
         self.disconnect_hs()
-
-class SocketApp(object):
-    def __init__(self):
-        self.buffer = []
-        # Dummy request object to maintain state between Namespace
-        # initialization.
-        self.request = {
-            'nicknames': [],
-        }
-
-    def __call__(self, environ, start_response):
-        path = environ['PATH_INFO'].strip('/')
-
-        if not path:
-            start_response('200 OK', [('Content-Type', 'text/html')])
-            return ['<h1>Welcome. '
-                'Try the <a href="/chat.html">chat</a> example.</h1>']
-
-        if path.startswith('client/') or path == 'chat.html':
-            try:
-                data = open(path).read()
-            except Exception:
-                return self.not_found(start_response)
-
-            if path.endswith(".js"):
-                content_type = "text/javascript"
-            elif path.endswith(".css"):
-                content_type = "text/css"
-            elif path.endswith(".swf"):
-                content_type = "application/x-shockwave-flash"
-            else:
-                content_type = "text/html"
-
-            start_response('200 OK', [('Content-Type', content_type)])
-            return [data]
-
-        if path.startswith("socket.io"):
-            socketio_manage(environ, {'': GameNamespace}, self.request)
-        else:
-            return self.not_found(start_response)
-
-    def not_found(start_response):
-        start_response('404 Not Found', [])
-        return ['<h1>Not Found</h1>']
-
-
-class MyWebView(QWebView):
-
-  def __init__(self):
-    super(MyWebView, self).__init__(None)
-    QTimer.singleShot(0, self.startServer)
-
-  def startServerReal(self):
-    print "b"
-    ioserver = SocketIOServer(('0.0.0.0', 8080), SocketApp(),
-        resource="socket.io", policy_server=True,
-        policy_listener=('0.0.0.0', 10843))
-    print "c"
-    QTimer.singleShot(0, self.loadPage)
-    ioserver.serve_forever()
-
-  def startServer(self):
-    print "a"
-    gevent.spawn(self.startServerReal)
-    #QTimer.singleShot(50, self.loadPage)
-
-  def loadPage(self):
-    print "d"
-    self.load(QUrl("http://localhost:8080/client/index.html"))
-
-  def closeEvent(self, event):
-    event.accept()
-
-app = QApplication(sys.argv)
-web = MyWebView()
-web.show()
-web.raise_()
-#web.showFullScreen()
-sys.exit(app.exec_())
