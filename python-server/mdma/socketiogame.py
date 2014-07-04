@@ -7,9 +7,38 @@ from socketio.mixins import RoomsMixin, BroadcastMixin
 from pymindwave import headset
 from pymindwave.pyeeg import bin_power
 
-##
-
 from socketio import socketio_manage
+
+class GameHeadset(headset.Headset):
+  def __init__(self, *args, **kwargs):
+    super(GameHeadset, self).__init__(self, *args, **kwargs)
+
+  def get_json(self):
+    waves_vector = self.get('waves_vector')
+    meditation = self.get('meditation')
+    attention = self.get('attention')
+    poor_signal = self.get('poor_signal')
+    spectrum = self.raw_to_spectrum(self.get('rawdata')).tolist()
+    packet = {
+      'raw_spectrum': spectrum,
+      'eSense': {
+        'meditation': meditation,
+        'attention': attention,
+      },
+      'eegPower' : {
+        'delta': waves_vector[0],
+        'theta': waves_vector[1],
+        'lowAlpha': waves_vector[2],
+        'highAlpha': waves_vector[3],
+        'lowBeta': waves_vector[4],
+        'highBeta': waves_vector[5],
+        'lowGamma': waves_vector[6],
+        'highGamma': waves_vector[7]
+      },
+      'poorSignalLevel': poor_signal
+    }
+    return packet
+
 
 class SocketApp(object):
     def __init__(self):
@@ -73,61 +102,8 @@ class GameNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
     def my_loop(self):
         while True:
             if (self.connected):
-                print "fire!"
-                #print 'attention {0}, meditation {1}'.format(self.hs.get('attention'), self.hs.get('meditation'))
-                #print 'alpha_waves {0}'.format(self.hs.get('alpha_waves'))
-                #print 'blink_strength {0}'.format(self.hs.get('blink_strength'))
-                #print 'raw data:'
-                #print self.hs.get('rawdata')
-                waves_vector = self.hs1.get('waves_vector')
-                meditation = self.hs1.get('meditation')
-                attention = self.hs1.get('attention')
-                poor_signal = self.hs1.get('poor_signal')
-                print 'poor_signal {0}'.format(poor_signal)
-                spectrum = self.raw_to_spectrum(self.hs1.get('rawdata')).tolist()
-                packet1 = {
-                  'timestamp': t,
-                  'raw_spectrum': spectrum,
-                  'eSense': {
-                    'meditation': meditation,
-                    'attention': attention,
-                  },
-                  'eegPower' : {
-                    'delta': waves_vector[0],
-                    'theta': waves_vector[1],
-                    'lowAlpha': waves_vector[2],
-                    'highAlpha': waves_vector[3],
-                    'lowBeta': waves_vector[4],
-                    'highBeta': waves_vector[5],
-                    'lowGamma': waves_vector[6],
-                    'highGamma': waves_vector[7]
-                  },
-                  'poorSignalLevel': poor_signal
-                }
-                waves_vector = self.hs2.get('waves_vector')
-                meditation = self.hs2.get('meditation')
-                attention = self.hs2.get('attention')
-                poor_signal = self.hs2.get('poor_signal')
-                spectrum = self.raw_to_spectrum(self.hs2.get('rawdata')).tolist()
-                packet2 = {
-                  'timestamp': t,
-                  'raw_spectrum': spectrum,
-                  'eSense': {
-                    'meditation': meditation,
-                    'attention': attention,
-                  },
-                  'eegPower' : {
-                    'delta': waves_vector[0],
-                    'theta': waves_vector[1],
-                    'lowAlpha': waves_vector[2],
-                    'highAlpha': waves_vector[3],
-                    'lowBeta': waves_vector[4],
-                    'highBeta': waves_vector[5],
-                    'lowGamma': waves_vector[6],
-                    'highGamma': waves_vector[7]
-                  },
-                  'poorSignalLevel': poor_signal
-                }
+                packet1 = self.hs1.get_json()
+                packet2 = self.hs2.get_json()
                 packets = [packet1, packet2]
                 self.emit('mindEvent', packets)
             gevent.sleep(1)
@@ -141,8 +117,8 @@ class GameNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             self.connected = False
 
     def connect_hs(self):
-        self.hs1 = headset.Headset('/dev/tty.MindWaveMobile-DevA-1')
-        self.hs2 = headset.Headset('/dev/tty.MindWaveMobile-DevA')
+        self.hs1 = GameHeadset('/dev/tty.MindWaveMobile-DevA-1')
+        self.hs2 = GameHeadset('/dev/tty.MindWaveMobile-DevA')
         self.hs1.disconnect()
         self.hs2.disconnect()
         settings1 = self.hs1.dongle_fs.getSettingsDict()
