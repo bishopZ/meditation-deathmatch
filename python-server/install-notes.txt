@@ -1,0 +1,7 @@
+Windows: Install Anaconda
+http://docs.continuum.io/anaconda/index.html
+
+pip install pyserial
+
+https://github.com/abourget/gevent-socketio
+https://github.com/akloster/python-mindwave

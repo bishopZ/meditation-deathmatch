@@ -1,3 +1,5 @@
+import os
+
 from gevent import monkey; monkey.patch_all()
 import gevent
 
@@ -51,27 +53,32 @@ class SocketApp(object):
         path = environ['PATH_INFO'].strip('/')
 
         if not path:
-            start_response('200 OK', [('Content-Type', 'text/html')])
-            return ['<h1>Welcome. '
-                'Try the <a href="/chat.html">chat</a> example.</h1>']
+          start_response('301 Redirect', [('Location', '/client/index.html'),])
+          return []
 
-        if path.startswith('client/') or path == 'chat.html':
-            try:
-                data = open(path).read()
-            except Exception:
-                return self.not_found(start_response)
+        if path.startswith('client/'):
+          mode = 'rb'
+          if path.endswith(".png"):
+            content_type = "image/png"
+          elif path.endswith(".js"):
+            mode = 'r'
+            content_type = "text/javascript"
+          elif path.endswith(".css"):
+            mode = 'r'
+            content_type = "text/css"
+          elif path.endswith(".swf"):
+            content_type = "application/x-shockwave-flash"
+          else:
+            mode = 'r'
+            content_type = "text/html"
 
-            if path.endswith(".js"):
-                content_type = "text/javascript"
-            elif path.endswith(".css"):
-                content_type = "text/css"
-            elif path.endswith(".swf"):
-                content_type = "application/x-shockwave-flash"
-            else:
-                content_type = "text/html"
+          try:
+              data = open(path.replace('/', os.sep), mode).read()
+          except Exception:
+              return self.not_found(start_response)
 
-            start_response('200 OK', [('Content-Type', content_type)])
-            return [data]
+          start_response('200 OK', [('Content-Type', content_type)])
+          return [data]
 
         if path.startswith("socket.io"):
             socketio_manage(environ, {'': GameNamespace}, self.request)
@@ -83,9 +90,7 @@ class SocketApp(object):
         return ['<h1>Not Found</h1>']
 
 
-
-
-class GameNamespace(BaseNamespace:
+class GameNamespace(BaseNamespace):
 
     hs1 = {}
     hs2 = {}

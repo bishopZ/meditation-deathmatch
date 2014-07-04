@@ -10,7 +10,7 @@ from gi.repository import Gtk
 from gi.repository import GObject as gobject
 
 def socketio_server(q):
-    server = SocketIOServer(('0.0.0.0', 0), SocketApp())
+    server = SocketIOServer(('0.0.0.0', 0), SocketApp(), policy_server=False)
     server.start()
     port = server.socket.getsockname()[1]
     q.put(port)
