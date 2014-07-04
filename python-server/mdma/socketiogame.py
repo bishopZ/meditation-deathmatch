@@ -1,17 +1,20 @@
 from gevent import monkey; monkey.patch_all()
 import gevent
 
+from socketio import socketio_manage
 from socketio.namespace import BaseNamespace
-from socketio.mixins import RoomsMixin, BroadcastMixin
 
 from pymindwave import headset
 from pymindwave.pyeeg import bin_power
 
-from socketio import socketio_manage
-
 class GameHeadset(headset.Headset):
   def __init__(self, *args, **kwargs):
     super(GameHeadset, self).__init__(self, *args, **kwargs)
+
+  def raw_to_spectrum(self, rawdata):
+        flen = 50
+        spectrum, relative_spectrum = bin_power(rawdata, range(flen), 512)
+        return spectrum
 
   def get_json(self):
     waves_vector = self.get('waves_vector')
@@ -39,15 +42,10 @@ class GameHeadset(headset.Headset):
     }
     return packet
 
-
 class SocketApp(object):
     def __init__(self):
         self.buffer = []
-        # Dummy request object to maintain state between Namespace
-        # initialization.
-        self.request = {
-            'nicknames': [],
-        }
+        self.request = {}
 
     def __call__(self, environ, start_response):
         path = environ['PATH_INFO'].strip('/')
@@ -87,17 +85,12 @@ class SocketApp(object):
 
 
 
-class GameNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
+class GameNamespace(BaseNamespace:
 
     hs1 = {}
     hs2 = {}
     connected = False
     loop_greenlet = ''
-
-    def raw_to_spectrum(self, rawdata):
-        flen = 50
-        spectrum, relative_spectrum = bin_power(rawdata, range(flen), 512)
-        return spectrum
 
     def my_loop(self):
         while True:
