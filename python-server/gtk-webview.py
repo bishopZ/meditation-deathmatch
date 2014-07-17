@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from socketio.server import SocketIOServer
-from mdma.socketiogame import SocketApp
+from lib.socketiogame import SocketApp
 
 from multiprocessing import Process, Queue
 

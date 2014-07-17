@@ -11,7 +11,7 @@ from pymindwave.pyeeg import bin_power
 
 class GameHeadset(headset.Headset):
   def __init__(self, *args, **kwargs):
-    super(GameHeadset, self).__init__(self, *args, **kwargs)
+    headset.Headset.__init__(self, *args, **kwargs)
 
   def raw_to_spectrum(self, rawdata):
         flen = 50
@@ -108,15 +108,15 @@ class GameNamespace(BaseNamespace):
     
     def disconnect_hs(self):
         if (self.connected):
+            self.connected = False
             self.hs1.disconnect()
             self.hs2.disconnect()
             self.hs1.dongle_fs.close()
             self.hs2.dongle_fs.close()
-            self.connected = False
 
     def connect_hs(self):
-        self.hs1 = GameHeadset('/dev/tty.MindWaveMobile-DevA-1')
-        self.hs2 = GameHeadset('/dev/tty.MindWaveMobile-DevA')
+        self.hs1 = GameHeadset('/dev/tty.MindWaveMobile-DevA')
+        self.hs2 = GameHeadset('/dev/tty.MindWaveMobile-DevA-1')
         self.hs1.disconnect()
         self.hs2.disconnect()
         settings1 = self.hs1.dongle_fs.getSettingsDict()
@@ -151,5 +151,6 @@ class GameNamespace(BaseNamespace):
     def on_request_disconnect(self):
         print "will disconnect"
         if ('kill' in dir(self.loop_greenlet)):
+          print "kill greenlet"
           self.loop_greenlet.kill()
         self.disconnect_hs()

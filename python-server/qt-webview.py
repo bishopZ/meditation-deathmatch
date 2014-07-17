@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import sys
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtWebKit import *
+from PyQt4.QtCore import QUrl
+from PyQt4.QtGui import QApplication
+from PyQt4.QtWebKit import QWebView
 
 from socketio.server import SocketIOServer
-from mdma.socketiogame import SocketApp
+from lib.socketiogame import SocketApp
 
 from multiprocessing import Process, Queue
 
@@ -27,4 +27,6 @@ if __name__ == '__main__':
   web = QWebView()
   web.load(QUrl(url))
   web.show()
+  if sys.platform == "darwin":
+    web.raise_()
   sys.exit(app.exec_())
