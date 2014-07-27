@@ -65,7 +65,7 @@ var startConnector = function(){
 				if (running) { 
 					io.emit('mindEvent', data); 
 				}
-				//console.log(data);		
+				console.log(data);		
 			});
 		}
 		console.log('device connected');

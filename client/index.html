@@ -599,14 +599,14 @@ require([], function () {
                 theta : data.eegPower.theta/1000
             });
 
-            if (data.eSense.meditation < 25 && data.eSense.attention < 25) {
-                player1.score += 3;
-            } else if (data.eSense.meditation > 90 && data.eSense.attention > 90) {
-                player1.score += 24;
-            } else if (data.eSense.meditation > 90) {
-                player1.score += 12;
-            } else if (data.eSense.meditation > 80) {
+            if (data.eSense.meditation < 22 && data.eSense.attention < 22) {
                 player1.score += 2;
+            } else if (data.eSense.meditation > 90 && data.eSense.attention > 90) {
+                player1.score += 12;
+            } else if (data.eSense.meditation > 90) {
+                player1.score += 11;
+            } else if (data.eSense.meditation > 80) {
+                player1.score += 1;
             } 
             // else if (data.eSense.meditation > 70) {
             //     score += 1;
