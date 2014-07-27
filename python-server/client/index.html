@@ -147,6 +147,10 @@
             margin: 0;
             border-radius: 0;
             border-bottom:1px solid #999;
+            height: 60px;
+        }
+        div.progress.attention {
+            display: none;
         }
 
         .floatL { float: left; position: relative; display: inline-block; border-right:1px solid #999;}
@@ -157,22 +161,22 @@
   </head>
   <body>
     
-    <div class="progress meditation floatL" style="width:50%">
+    <div class="progress meditation floatL" style="width:49%">
       <div class="progress-bar progress-bar-info"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
         <span class="sr-only">45% Complete</span>
       </div>
     </div>
-    <div class="progress meditation floatR" style="width:50%">
+    <div class="progress meditation floatR" style="width:49%">
       <div class="progress-bar progress-bar-info"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
         <span class="sr-only">45% Complete</span>
       </div>
     </div>
-    <div class="progress attention floatL" style="width:50%">
+    <div class="progress attention floatL hidden" style="width:49%">
       <div class="progress-bar progress-bar-danger"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
         <span class="sr-only">65% Complete</span>
       </div>
     </div>
-    <div class="progress attention floatR" style="width:50%">
+    <div class="progress attention floatR hidden" style="width:49%">
       <div class="progress-bar progress-bar-danger"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
         <span class="sr-only">65% Complete</span>
       </div>
