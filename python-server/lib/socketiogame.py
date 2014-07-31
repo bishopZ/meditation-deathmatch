@@ -9,6 +9,9 @@ from socketio.namespace import BaseNamespace
 from pymindwave import headset
 from pymindwave.pyeeg import bin_power
 
+from datetime import datetime
+import csv
+
 class GameHeadset(headset.Headset):
   def __init__(self, *args, **kwargs):
     headset.Headset.__init__(self, *args, **kwargs)
@@ -96,6 +99,21 @@ class GameNamespace(BaseNamespace):
     hs2 = {}
     connected = False
     loop_greenlet = ''
+    logfile_fd = False
+
+    def packet_arr(self, packet):
+      return [
+        packet['eSense']['attention'],
+        packet['eSense']['meditation'],
+        packet['eegPower']['delta'],
+        packet['eegPower']['theta'],
+        packet['eegPower']['lowAlpha'],
+        packet['eegPower']['highAlpha'],
+        packet['eegPower']['lowBeta'],
+        packet['eegPower']['highBeta'],
+        packet['eegPower']['lowGamma'],
+        packet['eegPower']['highGamma']
+      ]  
 
     def my_loop(self):
         while True:
@@ -104,11 +122,13 @@ class GameNamespace(BaseNamespace):
                 packet2 = self.hs2.get_json()
                 packets = [packet1, packet2]
                 self.emit('mindEvent', packets)
+                self.logfile_writer.writerow(self.packet_arr(packet1) + self.packet_arr(packet2))
             gevent.sleep(1)
     
     def disconnect_hs(self):
         if (self.connected):
             self.connected = False
+            self.logfile_fd.close()
             self.hs1.disconnect()
             self.hs2.disconnect()
             self.hs1.dongle_fs.close()
@@ -139,7 +159,9 @@ class GameNamespace(BaseNamespace):
             gevent.sleep(1)
             print 'current state hs2: {0}'.format(self.hs2.get_state())
         print 'hs2 connected'
-  
+        self.logfile_fd = open('md_'+datetime.now().strftime('%Y%m%d-%H%M%S')+'.csv', 'w') 
+        self.logfile_writer = csv.writer(self.logfile_fd, delimiter=',')
+ 
         self.connected = True 
         print 'now connected!'
 
