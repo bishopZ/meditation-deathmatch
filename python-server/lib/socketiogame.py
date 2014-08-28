@@ -100,6 +100,26 @@ class GameNamespace(BaseNamespace):
     connected = False
     loop_greenlet = ''
     logfile_fd = False
+    ser1_dev = '/dev/tty.usbmodem1411'
+    ser2_dev = '/dev/tty.usbmodem1451'
+    ser1 = ''
+    ser2 = ''
+
+    def handle_lights(ser, packet):
+      arr = [
+        packet['eegPower']['delta'],
+        packet['eegPower']['theta'],
+        packet['eegPower']['lowAlpha'],
+        packet['eegPower']['highAlpha'],
+        packet['eegPower']['lowBeta'],
+        packet['eegPower']['highBeta'],
+        packet['eegPower']['lowGamma'],
+        packet['eegPower']['highGamma']
+      ]  
+      idx =  arr.index(max(arr))
+      out = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+      val = out[idx]
+      ser.write(val + "\n")
 
     def packet_arr(self, packet):
       return [
@@ -159,7 +179,7 @@ class GameNamespace(BaseNamespace):
             gevent.sleep(1)
             print 'current state hs2: {0}'.format(self.hs2.get_state())
         print 'hs2 connected'
-        self.logfile_fd = open('md_'+datetime.now().strftime('%Y%m%d-%H%M%S')+'.csv', 'w') 
+        self.logfile_fd = open('csv/md_'+datetime.now().strftime('%Y%m%d-%H%M%S')+'.csv', 'w') 
         self.logfile_writer = csv.writer(self.logfile_fd, delimiter=',')
  
         self.connected = True 
