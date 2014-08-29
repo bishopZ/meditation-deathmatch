@@ -104,6 +104,11 @@ class GameNamespace(BaseNamespace):
     ser2_dev = '/dev/tty.usbmodem1451'
     ser1 = ''
     ser2 = ''
+    twoPlayer = False
+
+    def send_ser_message(ser, message):
+      #ser.write(message + "\n")
+      print message + "\n"
 
     def handle_lights(ser, packet):
       arr = [
@@ -119,7 +124,7 @@ class GameNamespace(BaseNamespace):
       idx =  arr.index(max(arr))
       out = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
       val = out[idx]
-      ser.write(val + "\n")
+      send_ser_message(ser, val)
 
     def packet_arr(self, packet):
       return [
@@ -139,7 +144,10 @@ class GameNamespace(BaseNamespace):
         while True:
             if (self.connected):
                 packet1 = self.hs1.get_json()
-                packet2 = self.hs2.get_json()
+                if (self.twoPlayer):
+                  packet2 = self.hs2.get_json()
+                else:
+                  packet2 = packet1
                 packets = [packet1, packet2]
                 self.emit('mindEvent', packets)
                 self.logfile_writer.writerow(self.packet_arr(packet1) + self.packet_arr(packet2))
@@ -150,44 +158,66 @@ class GameNamespace(BaseNamespace):
             self.connected = False
             self.logfile_fd.close()
             self.hs1.disconnect()
-            self.hs2.disconnect()
+            if (self.twoPlayer):
+              self.hs2.disconnect()
             self.hs1.dongle_fs.close()
-            self.hs2.dongle_fs.close()
+            if (self.twoPlayer):
+              self.hs2.dongle_fs.close()
 
-    def connect_hs(self):
+    def connect_hs1(self):
+        self.connect_hs()
+
+    def connect_hs2(self):
+        self.connect_hs(True)
+
+    def connect_hs(self, twoPlayer = False):
+        self.twoPlayer = twoPlayer
+        print("twoPlayer is set to " + str(twoPlayer) + "\n") 
         self.hs1 = GameHeadset('/dev/tty.MindWaveMobile-DevA')
-        self.hs2 = GameHeadset('/dev/tty.MindWaveMobile-DevA-1')
+        if (self.twoPlayer):
+          self.hs2 = GameHeadset('/dev/tty.MindWaveMobile-DevA-1')
         self.hs1.disconnect()
-        self.hs2.disconnect()
+        if (self.twoPlayer):
+          self.hs2.disconnect()
         settings1 = self.hs1.dongle_fs.getSettingsDict()
-        settings2 = self.hs2.dongle_fs.getSettingsDict()
+        if (self.twoPlayer):
+          settings2 = self.hs2.dongle_fs.getSettingsDict()
         for i in xrange(2):
             settings1['rtscts'] = not settings1['rtscts']
-            settings2['rtscts'] = not settings2['rtscts']
+            if (self.twoPlayer):
+              settings2['rtscts'] = not settings2['rtscts']
             self.hs1.dongle_fs.applySettingsDict(settings1)
-            self.hs2.dongle_fs.applySettingsDict(settings2)
+            if (self.twoPlayer):
+              self.hs2.dongle_fs.applySettingsDict(settings2)
         gevent.sleep(2)
         self.hs1.connect()
-        self.hs2.connect()
+        if (self.twoPlayer):
+          self.hs2.connect()
   
         while self.hs1.get_state() != 'connected':
             gevent.sleep(1)
             print 'current state hs1: {0}'.format(self.hs1.get_state())
         print 'hs1 connected'
   
-        while self.hs2.get_state() != 'connected':
-            gevent.sleep(1)
-            print 'current state hs2: {0}'.format(self.hs2.get_state())
-        print 'hs2 connected'
+        if (self.twoPlayer):
+          while self.hs2.get_state() != 'connected':
+              gevent.sleep(1)
+              print 'current state hs2: {0}'.format(self.hs2.get_state())
+          print 'hs2 connected'
         self.logfile_fd = open('csv/md_'+datetime.now().strftime('%Y%m%d-%H%M%S')+'.csv', 'w') 
         self.logfile_writer = csv.writer(self.logfile_fd, delimiter=',')
  
         self.connected = True 
         print 'now connected!'
 
-    def on_request_connect(self):
+    def on_request_connect_one(self):
         print "will connect"
-        gevent.Greenlet.spawn(self.connect_hs)
+        gevent.Greenlet.spawn(self.connect_hs1)
+        self.loop_greenlet = gevent.Greenlet.spawn(self.my_loop)
+
+    def on_request_connect_two(self):
+        print "will connect"
+        gevent.Greenlet.spawn(self.connect_hs2)
         self.loop_greenlet = gevent.Greenlet.spawn(self.my_loop)
 
     def on_request_disconnect(self):

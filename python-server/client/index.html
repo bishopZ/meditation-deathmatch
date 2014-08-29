@@ -687,12 +687,53 @@ require([], function () {
     var current = 0;
     var slide = [
         {
-            left: [ '' ],
-            right: [ 'Connect to Device', function (){
+            left: [ 'Connect One Player', function (){
                 
                 
                 //io.emit('adapter:start');
-                io.emit('request_connect');
+                io.emit('request_connect_one');
+                console.log('connecting to thinkgear');
+                var data1, data2;
+                io.on('mindEvent', function(eventData){
+                    console.log(eventData);
+
+                    if (type.arr(eventData)) {
+                        data1 = MindEvent(eventData[0]);
+                        data2 = MindEvent(eventData[1]);
+                    } else {
+                        data1 = MindEvent(eventData);
+                        data2 = MindEvent();
+                    }
+    
+                    if (!connected){
+                        if (data1.eSense.attention > 10
+                            && data1.eSense.meditation > 10
+                        ){
+                            io.emit('game:stop', profile.history);
+                            connected = true;
+                            $('.readout').html('Device Connected');
+                            if (current === 0) next();
+                        } else if (data1.poorSignalLevel > 0) {
+                            $('.readout').html('Poor Signal: ' + data1.poorSignalLevel);
+                            console.log('poor signal: ' + data1.poorSignalLevel);
+                        }
+                    } else if (gameOn) { 
+                        profile.history.push(eventData);
+                        updateDisplay(data1, player1);
+                        updateDisplay(data2, player2);
+                        graph.update();
+                    }
+
+                });
+
+            } ],
+
+
+            right: [ 'Connect Two Player', function (){
+                
+                
+                //io.emit('adapter:start');
+                io.emit('request_connect_two');
                 console.log('connecting to thinkgear');
                 var data1, data2;
                 io.on('mindEvent', function(eventData){
