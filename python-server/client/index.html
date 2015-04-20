@@ -748,8 +748,8 @@ require([], function () {
                     }
     
                     if (!connected){
-                        if (data1.eSense.attention > 10
-                            && data1.eSense.meditation > 10
+                        if (data1.eSense.attention > 1
+                            && data1.eSense.meditation > 1
                         ){
                             io.emit('game:stop', profile.history);
                             connected = true;
