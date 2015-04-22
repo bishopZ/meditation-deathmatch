@@ -1,12 +1,12 @@
 
 
-#Meditation Deathmatch v0.2
+#Meditation Deathmatch v0.3
 
 [http://meditationdeathmat.ch/](http://meditationdeathmat.ch/)
 
 For Meditation Deathmatch, two opponents face off to meditate. We use EEG to read their brain signals and determine who is staying in a meditative state better. Several other biometric factors are also monitored, and the information is visualized in a creative fashion on a projection screen. Various game rules may be used, but in one basic version, a health meter decreases when one opponent is not doing as well as the other.
 
-Collaborators include: Matt Dorsey, Eric Carlin, Shanta Stevens, Josh Jackson, Dr. David Eagleman, and Bishop Zareh.
+Collaborators include: Matt Dorsey, Eric Carlin, Shanta Stevens, Joshua Jackson, and Bishop Zareh.
 
 ##Installation
 
