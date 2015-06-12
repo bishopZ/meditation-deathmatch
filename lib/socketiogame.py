@@ -139,6 +139,7 @@ class GameNamespace(BaseNamespace):
         self.hs1 = GameHeadset(5001)
         self.hs_greenlet = gevent.Greenlet.spawn(self.hs1.run)
         if (twoPlayer):
+            self.twoPlayer = True
             self.hs2 = GameHeadset(5002)
             self.hs_greenlet = gevent.Greenlet.spawn(self.hs2.run)
         self.connected = True
