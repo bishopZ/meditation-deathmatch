@@ -87,10 +87,16 @@ class MuseOSC:
             pass
         elif (path in raw_ffts):
             if (path == '/muse/elements/raw_fft0'):
+                self.raw_fft0 = args
                 bands = [1, 4, 8, 10, 13, 18, 31, 41, 50]
                 bin_powers, bin_relative = pyeeg.bin_power(args, bands, 220)
                 self.waves_vector = bin_powers
-                #print bin_powers
+            elif (path == '/muse/elements/raw_fft1'):
+                self.raw_fft1 = args
+            elif (path == '/muse/elements/raw_fft2'):
+                self.raw_fft2 = args
+            elif (path == '/muse/elements/raw_fft3'):
+                self.raw_fft3 = args
         else:
             write(path + " ,")
             write(types)
@@ -124,6 +130,10 @@ class GameHeadset(MuseOSC):
     attention = 0
     meditation = 0
     waves_vector = [0, 0, 0, 0, 0, 0, 0, 0]
+    raw_fft0 = []
+    raw_fft1 = []
+    raw_fft2 = []
+    raw_fft3 = []
 
     def __init__(self, *args, **kwargs):
         MuseOSC.__init__(self, *args, **kwargs)
@@ -152,6 +162,12 @@ class GameHeadset(MuseOSC):
                 'highBeta': waves_vector[5],
                 'lowGamma': waves_vector[6],
                 'highGamma': waves_vector[7]
+            },
+            'FFT': {
+                'raw0': self.raw_fft0,
+                'raw1': self.raw_fft1,
+                'raw2': self.raw_fft2,
+                'raw3': self.raw_fft3
             },
             'poorSignalLevel': poor_signal
         }
