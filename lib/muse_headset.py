@@ -7,7 +7,7 @@ import gevent
 import sys
 import liblo
 import datetime
-from pymindwave import pyeeg
+import pyeeg
 
 
 class MuseOSC:
