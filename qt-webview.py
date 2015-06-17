@@ -2,7 +2,6 @@
 
 import sys
 from PyQt4 import QtGui, QtCore, QtWebKit
-from PyQt4.QtCore import QTimer
 
 from socketio.server import SocketIOServer
 from lib.socketiogame import SocketApp
@@ -19,11 +18,12 @@ def socketio_server(q):
     q.put(port)
     server.serve_forever()
 
+
 class PyQtGreenlet(gevent.Greenlet):
     def __init__(self, app):
         gevent.Greenlet.__init__(self)
         self.app = app
- 
+
     def _run(self):
         while True:
             self.app.processEvents()
@@ -31,6 +31,7 @@ class PyQtGreenlet(gevent.Greenlet):
                 self.app.processEvents()
                 gevent.sleep(0.01)
         gevent.sleep(0.01)
+
 
 class MyWindow(QtWebKit.QWebView):
 
@@ -68,7 +69,6 @@ if __name__ == '__main__':
     q = Queue()
     ioserver = Process(target=socketio_server, args=(q,))
     f = gevent.spawn(ioserver.start())
-    #ioserver.start()
     port = q.get()
     url = 'http://localhost:'+str(port)+'//client/index.html'
 
