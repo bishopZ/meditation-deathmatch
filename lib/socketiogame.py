@@ -1,4 +1,5 @@
 import os
+import serial
 
 from gevent import monkey
 monkey.patch_all()
@@ -64,44 +65,25 @@ class GameNamespace(BaseNamespace):
     hs1 = {}
     hs2 = {}
     connected = False
-    loop_greenlet = ''
-    logfile_fd = False
     twoPlayer = False
+    useLights = True
+    loop_greenlet = ''
+    ser = ''
+    ser_device = '/dev/ttyUSB0'
+    ser_connected = False
 
-    def send_ser_message(ser, message):
-        #ser.write(message + "\n")
-        print message + "\n"
-
-    def handle_lights(ser, packet):
-        arr = [
-            packet['eegPower']['delta'],
-            packet['eegPower']['theta'],
-            packet['eegPower']['lowAlpha'],
-            packet['eegPower']['highAlpha'],
-            packet['eegPower']['lowBeta'],
-            packet['eegPower']['highBeta'],
-            packet['eegPower']['lowGamma'],
-            packet['eegPower']['highGamma']
-        ]
-        idx = arr.index(max(arr))
-        out = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-        val = out[idx]
-        return val  # should send to ser instead
-        #send_ser_message(ser, val)
-
-    def packet_arr(self, packet):
-        return [
-            packet['eSense']['attention'],
-            packet['eSense']['meditation'],
-            packet['eegPower']['delta'],
-            packet['eegPower']['theta'],
-            packet['eegPower']['lowAlpha'],
-            packet['eegPower']['highAlpha'],
-            packet['eegPower']['lowBeta'],
-            packet['eegPower']['highBeta'],
-            packet['eegPower']['lowGamma'],
-            packet['eegPower']['highGamma']
-        ]
+    def handle_lights(self, which, packet):
+        meditation = packet['eSense']['meditation']
+        if (meditation > 90):
+            color = 'c'
+        elif (meditation > 80):
+            color = 'b'
+        elif (meditation > 75):
+            color = 'e'
+        else:
+            color = 'a'
+        if (self.ser_connected):
+            self.ser.write(str(which)+","+color+"\n")
 
     def my_loop(self):
         while True:
@@ -112,22 +94,17 @@ class GameNamespace(BaseNamespace):
                 else:
                     packet2 = packet1
                 packets = [packet1, packet2]
+                self.handle_lights(1, packet1)
+                self.handle_lights(2, packet2)
                 self.emit('mindEvent', packets)
-                #out = self.packet_arr(packet1)
-                #out += self.packet_arr(packet2)
-                #self.logfile_writer.writerow(out)
             gevent.sleep(1)
 
     def disconnect_hs(self):
         if (self.connected):
             self.connected = False
-            #self.logfile_fd.close()
             self.hs1.disconnect()
             if (self.twoPlayer):
                 self.hs2.disconnect()
-            self.hs1.dongle_fs.close()
-            if (self.twoPlayer):
-                self.hs2.dongle_fs.close()
 
     def connect_hs1(self):
         self.connect_hs()
@@ -135,7 +112,17 @@ class GameNamespace(BaseNamespace):
     def connect_hs2(self):
         self.connect_hs(True)
 
+    def init_lights(self):
+        if (self.useLights):
+            try:
+                self.ser = serial.Serial(self.ser_device, 9600, timeout=2)
+                gevent.sleep(1) # The arduino hates us if we don't wait
+                self.ser_connected = True
+            except:
+                pass
+
     def connect_hs(self, twoPlayer=False):
+        self.hs_greenlet = gevent.Greenlet.spawn(self.init_lights)
         self.hs1 = GameHeadset(5001)
         self.hs_greenlet = gevent.Greenlet.spawn(self.hs1.run)
         if (twoPlayer):
