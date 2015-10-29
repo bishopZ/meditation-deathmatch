@@ -8,23 +8,6 @@ import gevent
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)
 gevent.sleep(1)
 
-
-ser.write("1,a\n") # red
-gevent.sleep(0.4)
-
-ser.write("1,b\n") # yellow
-gevent.sleep(0.4)
-
-ser.write("1,c\n") # green
-gevent.sleep(0.4)
-#ser.write("1,d\n") # blue
-#gevent.sleep(0.4)
-#ser.write("1,f\n") # pink
-#gevent.sleep(0.4)
-
-#ser.write("1,a\n")
-#gevent.sleep(0.4)
-#ser.write("1,b\n")
 #gevent.sleep(0.4)
 #ser.write("1,c\n")
 #gevent.sleep(0.4)

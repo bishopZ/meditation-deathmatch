@@ -5,7 +5,8 @@ from lib.socketiogame import SocketApp
 
 
 def socketio_server():
-    server = SocketIOServer(('0.0.0.0', 0), SocketApp(), policy_server=False)
+    #server = SocketIOServer(('0.0.0.0', 0), SocketApp(), policy_server=False)
+    server = SocketIOServer(('0.0.0.0', 38477), SocketApp(), policy_server=False)
     server.start()
     port = server.socket.getsockname()[1]
     print 'http://localhost:'+str(port)+'/'

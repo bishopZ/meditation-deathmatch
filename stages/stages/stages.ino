@@ -18,7 +18,7 @@ boolean stringComplete = false;  // whether the string is complete
 int dataPins[2];
 int clockPin = 3;
 
-Adafruit_NeoPixel strip1 = Adafruit_NeoPixel((nLEDs * nNumStageBlock), 6, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip1 = Adafruit_NeoPixel((nLEDs * nNumStageBlock), 5, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip2 = Adafruit_NeoPixel((nLEDs * nNumStageBlock), 7, NEO_GRB + NEO_KHZ800);
 
 
