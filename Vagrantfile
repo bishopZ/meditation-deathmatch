@@ -1,7 +1,7 @@
 $script = <<SCRIPT
 
 ## Sys Pre-Reqs
-sudo apt-get install -y python python-pip python-dev git liblo-dev python-numpy python-scipy python-pygame python-qt4 python-qt4-dev
+sudo apt-get install -y python python-pip python-dev git liblo-dev python-numpy python-scipy python-pygame python-qt4 python-qt4-dev cython lib32ncurses5
 sudo pip install pyliblo gevent-socketio pyserial
 
 ## MDM
@@ -15,8 +15,8 @@ SCRIPT
 Vagrant.configure("2") do |config|
 
   config.vm.define :ubuntu do |ubuntu|
-    ubuntu.vm.box      = 'ubuntu-1410'
-    ubuntu.vm.box_url  = 'https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-server-cloudimg-i386-vagrant-disk1.box'
+    ubuntu.vm.box      = 'ubuntu-1604'
+    ubuntu.vm.box_url  = 'https://cloud-images.ubuntu.com/vagrant/xenial/current/xenial-server-cloudimg-amd64-vagrant-disk1.box'
   end
 
   config.vm.network :private_network, ip: '10.200.0.2'
