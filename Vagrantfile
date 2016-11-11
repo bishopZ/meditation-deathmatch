@@ -1,5 +1,7 @@
 $script = <<SCRIPT
 
+## To run the stages you will also want to put your user account in the dialup group
+
 ## Sys Pre-Reqs
 sudo apt-get install -y python python-pip python-dev git liblo-dev python-numpy python-scipy python-pygame python-qt4 python-qt4-dev cython lib32ncurses5
 sudo pip install pyliblo gevent-socketio pyserial
