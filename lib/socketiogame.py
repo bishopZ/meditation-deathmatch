@@ -1,16 +1,15 @@
+#!/usr/bin/env python
+
 import os
 import serial
-
-from gevent import monkey
-monkey.patch_all()
 import gevent
 
 from socketio import socketio_manage
 from socketio.namespace import BaseNamespace
-
 from muse_headset import GameHeadset
+from gevent import monkey
 
-from time import sleep
+monkey.patch_all()
 
 
 class SocketApp(object):
@@ -116,7 +115,7 @@ class GameNamespace(BaseNamespace):
         if (self.useLights):
             try:
                 self.ser = serial.Serial(self.ser_device, 9600, timeout=2)
-                gevent.sleep(1) # The arduino hates us if we don't wait
+                gevent.sleep(1)  # The arduino hates us if we don't wait
                 self.ser_connected = True
             except:
                 pass
@@ -133,18 +132,18 @@ class GameNamespace(BaseNamespace):
         pass
 
     def on_request_connect_one(self):
-        print "will connect"
+        print("will connect")
         gevent.Greenlet.spawn(self.connect_hs1)
         self.loop_greenlet = gevent.Greenlet.spawn(self.my_loop)
 
     def on_request_connect_two(self):
-        print "will connect"
+        print("will connect")
         gevent.Greenlet.spawn(self.connect_hs2)
         self.loop_greenlet = gevent.Greenlet.spawn(self.my_loop)
 
     def on_request_disconnect(self):
-        print "will disconnect"
+        print("will disconnect")
         if ('kill' in dir(self.loop_greenlet)):
-            print "kill greenlet"
+            print("kill greenlet")
             self.loop_greenlet.kill()
         self.disconnect_hs()
