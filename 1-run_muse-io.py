@@ -3,8 +3,7 @@
 import subprocess
 
 cfg = {
-    'dev': '00:06:66:68:7E:44',
-    #'dev': '00:06:66:6C:32:C9',
+    'dev': '00:06:66:68:8D:1B',
     'port': '5001',
     'ip': '127.0.0.1',
     'muse_path': '/opt/Muse/',

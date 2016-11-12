@@ -5,7 +5,7 @@ import gevent
 
 # in Windows, First param is the Com Port -1, so COM6 = 5
 # in Linux, First param is /dev/ttyACM0
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=2)
 gevent.sleep(1)
 
 #gevent.sleep(0.4)

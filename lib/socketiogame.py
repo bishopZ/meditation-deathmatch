@@ -69,7 +69,7 @@ class GameNamespace(BaseNamespace):
     useLights = True
     loop_greenlet = ''
     ser = ''
-    ser_device = '/dev/ttyACM0'
+    ser_device = '/dev/ttyUSB0'
     ser_connected = False
 
     def handle_lights(self, which, packet):

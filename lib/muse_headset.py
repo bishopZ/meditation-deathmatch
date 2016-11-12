@@ -4,10 +4,11 @@ from gevent import monkey
 monkey.patch_all()
 import gevent
 
+import numpy as np
+
 import sys
 import liblo
 import datetime
-import pyeeg
 
 
 class MuseOSC:
@@ -47,11 +48,11 @@ class MuseOSC:
                           '/muse/elements/theta_session_score']
         if (path == '/muse/elements/experimental/concentration'):
             self.attention = args[0]
-            #print "CONCENTRATION " + str(args[0])
+            # print "CONCENTRATION " + str(args[0])
             pass
         elif (path == '/muse/elements/experimental/mellow'):
             self.meditation = args[0]
-            #print "MELLOW " + str(args[0])
+            # print "MELLOW " + str(args[0])
             pass
         elif (path == '/muse/eeg'):
             pass
@@ -88,9 +89,20 @@ class MuseOSC:
         elif (path in raw_ffts):
             if (path == '/muse/elements/raw_fft0'):
                 self.raw_fft0 = args
-                bands = [1, 4, 8, 10, 13, 18, 31, 41, 50]
-                bin_powers, bin_relative = pyeeg.bin_power(args, bands, 220)
-                self.waves_vector = bin_powers
+                C = np.abs(args)
+                Fs = 220
+                Band = [1, 4, 8, 10, 13, 18, 31, 41, 50]
+                Power = np.zeros(len(Band)-1)
+                # based on pyeeg bin_power function
+                for Freq_Index in xrange(0, len(Band)-1):
+                    Freq = float(Band[Freq_Index])
+                    Next_Freq = float(Band[Freq_Index+1])
+                    idx1 = int(np.floor(Freq/Fs*len(C)))
+                    idx2 = int(np.floor(Next_Freq/Fs*len(C)))
+                    Power[Freq_Index] = sum(C[idx1:idx2])
+                self.waves_vector = Power.tolist()
+                # bin_powers, bin_relative = pyeeg.bin_power(args, bands, 220) # problem
+                # self.waves_vector = bin_powers
             elif (path == '/muse/elements/raw_fft1'):
                 self.raw_fft1 = args
             elif (path == '/muse/elements/raw_fft2'):
@@ -116,13 +128,12 @@ class MuseOSC:
         return obj.now().strftime(fmt)
 
     def run(self):
-        # just loop and dispatch messages every 10ms
         while True:
             self.iterate()
-            gevent.sleep(0)
+            gevent.sleep(0.0001)
 
     def iterate(self):
-        self.server.recv(10)
+        self.server.recv(1)
 
 
 class GameHeadset(MuseOSC):
@@ -171,7 +182,7 @@ class GameHeadset(MuseOSC):
             },
             'poorSignalLevel': poor_signal
         }
-        print packet
+        # print(packet)
         return packet
 
 
