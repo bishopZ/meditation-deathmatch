@@ -6,8 +6,9 @@ import gevent
 
 from socketio import socketio_manage
 from socketio.namespace import BaseNamespace
-from muse_headset import GameHeadset
+from muse_headset import MuseOSC
 from gevent import monkey
+from time import time
 
 monkey.patch_all()
 
@@ -63,16 +64,16 @@ class GameNamespace(BaseNamespace):
 
     hs1 = {}
     hs2 = {}
-    connected = False
-    twoPlayer = False
+    hs1_greenlet = None
+    hs2_greenlet = None
     useLights = True
-    loop_greenlet = ''
     ser = ''
     ser_device = '/dev/ttyUSB0'
     ser_connected = False
+    last_light1_update = 0
+    last_light2_update = 0
 
-    def handle_lights(self, which, packet):
-        meditation = packet['eSense']['meditation']
+    def handle_lights(self, which, meditation):
         if (meditation > 90):
             color = 'c'
         elif (meditation > 80):
@@ -83,27 +84,6 @@ class GameNamespace(BaseNamespace):
             color = 'a'
         if (self.ser_connected):
             self.ser.write(str(which)+","+color+"\n")
-
-    def my_loop(self):
-        while True:
-            if (self.connected):
-                packet1 = self.hs1.get_json()
-                if (self.twoPlayer):
-                    packet2 = self.hs2.get_json()
-                else:
-                    packet2 = packet1
-                packets = [packet1, packet2]
-                self.handle_lights(1, packet1)
-                self.handle_lights(2, packet2)
-                self.emit('mindEvent', packets)
-            gevent.sleep(1)
-
-    def disconnect_hs(self):
-        if (self.connected):
-            self.connected = False
-            self.hs1.disconnect()
-            if (self.twoPlayer):
-                self.hs2.disconnect()
 
     def connect_hs1(self):
         self.connect_hs()
@@ -120,30 +100,47 @@ class GameNamespace(BaseNamespace):
             except:
                 pass
 
-    def connect_hs(self, twoPlayer=False):
-        self.hs_greenlet = gevent.Greenlet.spawn(self.init_lights)
-        self.hs1 = GameHeadset(5001)
-        self.hs_greenlet = gevent.Greenlet.spawn(self.hs1.run)
-        if (twoPlayer):
-            self.twoPlayer = True
-            self.hs2 = GameHeadset(5002)
-            self.hs_greenlet = gevent.Greenlet.spawn(self.hs2.run)
-        self.connected = True
-        pass
+    def handle_packet(self, headset, path, args):
+        if (path == '/muse/elements/experimental/mellow'):
+            curtime = time()
+            light_delay = 0.2
+            if (headset == 1):
+                if (curtime - self.last_light1_update > light_delay):
+                    # print("update lights 1")
+                    self.handle_lights(1, args[0] * 100)
+                    self.last_light1_update = curtime
+            if (headset == 2):
+                if (curtime - self.last_light2_update > light_delay):
+                    # print("update lights 2")
+                    self.handle_lights(2, args[0] * 100)
+                    self.last_light2_update = curtime
+        packet = {
+            'headset': headset,
+            'path': path,
+            'args': args
+        }
+        self.emit('packet', packet)
+
+    def handle_packet_one(self, path, args):
+        self.handle_packet(1, path, args)
+
+    def handle_packet_two(self, path, args):
+        self.handle_packet(2, path, args)
+
+    def on_request_init_lights(self):
+        print("request init lights")
+        self.init_lights_greenlet = gevent.Greenlet.spawn(self.init_lights)
 
     def on_request_connect_one(self):
-        print("will connect")
-        gevent.Greenlet.spawn(self.connect_hs1)
-        self.loop_greenlet = gevent.Greenlet.spawn(self.my_loop)
+        print("request connect one")
+        self.hs1 = MuseOSC(5001, self.handle_packet_one)
+        self.hs1_greenlet = gevent.Greenlet.spawn(self.hs1.run)
 
     def on_request_connect_two(self):
-        print("will connect")
-        gevent.Greenlet.spawn(self.connect_hs2)
-        self.loop_greenlet = gevent.Greenlet.spawn(self.my_loop)
+        print("request connect two")
+        self.hs2 = MuseOSC(5002, self.handle_packet_two)
+        self.hs2_greenlet = gevent.Greenlet.spawn(self.hs2.run)
 
     def on_request_disconnect(self):
         print("will disconnect")
-        if ('kill' in dir(self.loop_greenlet)):
-            print("kill greenlet")
-            self.loop_greenlet.kill()
-        self.disconnect_hs()
+        pass

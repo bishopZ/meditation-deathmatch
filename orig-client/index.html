@@ -1,0 +1,858 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--[if lt IE 8]> <html class="ie ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="ie ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>    <html class="ie ie9 oldie" lang="en"> <![endif]-->
+<!--[if IE 10]>    <html class="ie ie10 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 10]><!--> <html class="ie" lang="en"> <!--<![endif]-->
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Meditation Deathmatch</title>
+
+    <meta name="description" content="a game" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <base target="_blank" />
+
+    <style type="text/css">
+
+        body {
+            background-color: #000 !important; 
+        }
+
+        body * {
+            font-family: franklin_gothic !important;    
+        }
+
+    	/* Some base page styles 
+		#screen p { 
+			line-height: 22px; 
+			padding: 0; margin: 0; 
+			width: 100%;	
+		}
+
+		#screen .display {
+			width: 100%;
+		}
+        */
+
+		/* The poor man's progress bar */
+        .meters {
+            position: absolute;
+            top: 402px;
+            left: 50%;
+            margin-left: -279px;
+            width: 559px;
+            /*border: 1px solid #333;*/
+        }
+		.meters .score .inner, .meters .score2 .inner {
+			float: left;
+			position: relative;
+			height:100%;
+			width: 18px;
+			/*background: #d8d8d8;*/
+		}
+        .calm .inner { background: #ccd7d9; }
+        .attention .inner { background: #9daeb2; }
+        .depth .inner { background: #6b8c92; }
+        .range .inner { background: #5d848f; }
+        .delta .inner { background: #9daeb2; }
+        .theta .inner { background: #ccd7d9; }
+        .health .inner { background: #3e7d8e; }
+        .power .inner { background: #217a8c; }
+
+
+        .score2.calm .inner { background: #d8cec8; }
+        .score2.attention .inner { background: #c4b0a4; }
+        .score2.depth .inner { background: #b7937c; }
+        .score2.range .inner { background: #b27e5f; }
+        .score2.delta .inner { background: #c4b0a4; }
+        .score2.theta .inner { background: #d8cec8; }
+        .score2.health .inner { background: #b26330; }
+        .score2.power .inner { background: #a9522c; }
+
+        .meters {
+            z-index: 2;
+            height: 200px;
+        }
+		.meters .score {
+			display: inline-block;
+			height: 200px;
+			width: 20px;
+			/*border: 1px solid #d8d8d8;*/
+			border-radius: 5px;
+			clear: both;
+		}
+
+        .meters .score2 {
+            display: inline-block;
+            height: 200px;
+            width: 20px;
+            /*border: 1px solid #d8d8d8;*/
+            border-radius: 5px;
+            
+            float: right;
+        }
+
+        #container {
+            overflow: hidden;
+        }
+
+
+        #container .progress {
+            margin-bottom: 0px;
+        }
+        #container .button {
+            border-radius: 0;
+            width: 273px;
+            height: 87px;
+            cursor: pointer;
+        }
+
+        .countdown {
+            position: absolute;
+            bottom: 35px;
+            left: 20px;
+            font-size: 45px;
+            color: white;
+            z-index:4;
+        }
+
+        svg {
+            position: absolute;
+            top: 300px;
+            left: 50px;
+            margin-left: -50px;
+            z-index: 1;
+            display:none;
+        }
+
+        .readout {
+            height: 200px;
+            width: 220px;
+            position: absolute;
+            /*border: 1px solid white;*/
+            margin-top: 220px;
+            z-index: 6;
+        }
+        .readout p {
+            color: white;
+            font-size: 12px;
+            line-height: 0;
+        }
+        div.progress {
+            z-index: 3;
+            margin: 0;
+            border-radius: 0;
+            border-bottom:1px solid #999;
+            height: 40px;
+        }
+        div.progress.attention {
+            display: none;
+        }
+
+        .floatL { float: left; position: relative; display: inline-block; border-right:1px solid #999;}
+        .floatR { float: right; position: relative; display: inline-block; border-left:1px solid #999;}
+        .floatR .progress-bar { float: right; }
+    </style>
+
+  </head>
+  <body>
+    
+    <div class="progress meditation floatL" style="width:49%">
+      <div class="progress-bar progress-bar-info"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+        <span class="sr-only">45% Complete</span>
+      </div>
+    </div>
+    <div class="progress meditation floatR" style="width:49%">
+      <div class="progress-bar progress-bar-info"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+        <span class="sr-only">45% Complete</span>
+      </div>
+    </div>
+    <div class="progress attention floatL hidden" style="width:49%">
+      <div class="progress-bar progress-bar-danger"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+        <span class="sr-only">65% Complete</span>
+      </div>
+    </div>
+    <div class="progress attention floatR hidden" style="width:49%">
+      <div class="progress-bar progress-bar-danger"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+        <span class="sr-only">65% Complete</span>
+      </div>
+    </div>
+   
+
+
+    <div id="container">
+    </div>
+	
+    <div class="countdown"></div>
+    <div class="graph1"></div>
+    
+
+    <script type="x-tmpl" id="tmpl-intro">
+        <div class="square">
+            <img src="media/background3.png" />
+            <div class="button button-left" role="button">
+                <p>Word</p>
+            </div>
+            <div class="button button-right" role="button">
+                <p>Word</p>
+            </div>
+            <!-- <button type="button" class="btn btn-success btn-start">Connect</button> -->
+            
+        </div>
+    </script>
+
+  	<script src="/client/base/require/require.js"></script> 
+  	<script src="/client/base/jquery/jquery-1.9.1.min.js"></script> 
+    <script>
+
+// same as on document ready
+require([], function () {
+
+    require.config({
+        baseUrl: '/client/base/',
+        paths: {
+
+            'jquery': 'jquery/jquery-1.9.1.min',
+            'jquery.center': 'jquery/jquery.center.min',
+            'modernizr': 'modernizr-2.0.6.min',
+            'underscore': 'underscore-min',
+            'underscore.string': 'underscore.string.min',
+            'typecast': 'typecast/typecast.raw', // replace with $.type?
+            'frame': 'frame2',
+            'model': 'ModelAgent',
+            'socket.io': '../socket.io',
+            'lscache': 'lscache', 
+            'd3': 'd3.min',
+
+            'bootstrap': 'bootstrap/js/bootstrap.min',
+            'moment': 'moment.min',
+        	
+			// TODO: more magic!
+			//    script src="./base/jquery/jquery.ui.core.js"> 
+			//    script src="./base/d3.min.js">
+			//    script src="./base/jquery/jquery.tmpl.js">
+		
+        },
+        map: {
+            '*': {
+                'css': 'require/require.css',
+                'text': 'require/require.text'
+            }
+        }
+    });
+
+    // require(['./game.js'], function(game){
+    // 	console.log('done');
+    // });
+    require(
+    ['jquery', 'typecast', 'frame', 'model', 'socket.io', 'lscache', 'moment', 'd3',
+        'bootstrap',
+        'jquery.center',
+        //'underscore.string',
+        'css!/client/base/bootstrap/css/bootstrap.min.css',
+        //'css!bootstrap/css/bootstrap-theme.min.css',
+        //    /bootstrap/bootstrap-responsive.min.css
+        'css!stylist/style.css',
+        //    /stylist/layout.css
+        //    /stylist/forms.css
+        //    /bootstrap/font-awesome.min.css
+        'css!/client/media/franklin/stylesheet.css'
+    ], function($, type, Frame, Model, socket, lscache, moment, d3) {
+
+        var $container = $('#container');
+        $container.append($('#tmpl-intro').html());
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+        // Set up the buttons
+        var $square = $('.square');
+        $square.css({
+            height: 793,
+            width: 1291,
+            // background: '#d8d8d8',
+            position: 'absolute'
+        })
+        .center({
+            top     : 40
+        });
+
+        var $left = $('.button-left')
+        $left.css({
+                'position': 'absolute',
+                'font-size': '50px',
+                'padding-top': '5px',
+                'border-radius': '20px',
+                'margin-left': -140
+            })
+            .center({
+                against : 'parent',
+                top: 263
+            });
+        var $right = $('.button-right');
+        $right.css({
+                'position': 'absolute',
+                'font-size': '50px',
+                'padding-top': '5px',
+                'border-radius': '20px',
+                'margin-left': 140
+            })
+            .center({
+                against : 'parent',
+                top: 263
+            })
+            
+
+        var $leftLabel = $left.find('p');
+        $leftLabel.css({
+            'font-size':28,
+            color: '#ffffff',
+            'text-transform': 'uppercase',
+            'text-align': 'center'
+        });
+
+        var setLeftButton = function(html, fn){
+            $leftLabel.html(html);
+
+            $left.off('click'); 
+            if (type.fn(fn)) { 
+                $left.on('click', fn); 
+            }
+
+        }
+
+        var $rightLabel = $right.find('p');
+        $rightLabel.css({
+                'font-size':28,
+                color: '#ffffff',
+                'text-transform': 'uppercase',
+                'text-align': 'center'
+            });
+
+        var setRightButton = function(html, fn){
+            $rightLabel.html(html);
+
+            $right.off('click'); 
+            if (type.fn(fn)) { 
+                $right.on('click', fn); 
+            }
+
+        }
+
+        var setButton = function(which, text, fn){
+            if (which === 'left'){
+                setLeftButton(text, fn);
+            } else if (which === 'right') {
+                setRightButton(text, fn);
+            }
+        }
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+
+    // helpers
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+
+    // the graph
+
+    var graph1 = function(){
+
+        $('.graph1').center().show();
+
+        var n = 3, // number of layers
+            m = 200, // number of samples per layer
+            stack = d3.layout.stack().offset("wiggle"),
+            s1 = d3.range(n).map(function() { return bumpLayer(m); }),
+            s2= d3.range(n).map(function() { return bumpLayer(m); }),
+            layers0 = stack(s1),
+            layers1 = stack(s2);
+
+        var width = 1120,
+            height = 280;
+
+        var x = d3.scale.linear()
+            .domain([0, m - 1])
+            .range([0, width]);
+
+        var y = d3.scale.linear()
+            .domain([0, d3.max(layers0.concat(layers1), function(layer) { return d3.max(layer, function(d) { return d.y0 + d.y; }); })])
+            .range([height, 0]);
+
+        var color = d3.scale.linear()
+            .range(["#aad", "#556"]);
+
+        var area = d3.svg.area()
+            .x(function(d) { return x(d.x); })
+            .y0(function(d) { return y(d.y0); })
+            .y1(function(d) { return y(d.y0 + d.y); });
+
+        var svg = d3.select(".graph1").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        svg.selectAll("path")
+            .data(layers0)
+          .enter().append("path")
+            .attr("d", area)
+            .style("fill", function() { return color(Math.random()); });
+
+        function transition() {
+          d3.selectAll("path")
+              .data(function() {
+                var d = layers1;
+                layers1 = layers0;
+                return layers0 = d;
+              })
+            .transition()
+              .duration(1500)
+              .attr("d", area);
+        }
+
+        // Inspired by Lee Byron's test data generator.
+        function bumpLayer(n) {
+
+            function bump(a) {
+                var x = 1 / (.1 + Math.random()),
+                    y = 2 * Math.random() - .5,
+                    z = 10 / (.1 + Math.random());
+                for (var i = 0; i < n; i++) {
+                  var w = (i / n - y) * z;
+                  a[i] += x * Math.exp(-w * w);
+                }
+            }
+
+            var a = [], i;
+            for (i = 0; i < n; ++i) a[i] = 0;
+            for (i = 0; i < 5; ++i) bump(a);
+            return a.map(function(d, i) { 
+                return {x: i, y: Math.max(0, d)}; 
+            });            
+
+        }
+
+        function update(){
+            //layers1 = stack(getData());
+            layers1 = stack(d3.range(n).map(function() { return bumpLayer(m); }));
+            transition();
+            //console.log(layers1, layers0);
+        }
+
+
+        return {
+            update: update//,
+            //bump: bumpLayer,
+            //transition: transition
+        }
+
+    }
+
+   
+
+
+    //////////////////
+    // time clock
+    var timer = false;
+    var interval = 100;
+    function startTimer(minutes, callback){
+        //adjStatus('energy', .9);
+        var time = minutes * 60 * 1000;
+        var duration = moment.duration(time);
+        var countdown = time;
+        clearTimer();
+        timer = setInterval(function () {
+            //if (Math.floor(countdown) % 120 === 0) incStatus('energy', false); // Reduce engage over time
+            countdown -= interval;
+            var now = moment.duration(countdown);
+            //$('.countdown').text(now.hours() + 'h ' + now.minutes() + 'm ' + now.seconds()+ 's'); 
+            $('.countdown').text(now.minutes() + 'm ' + now.seconds()+ 's'); 
+            var total = now.hours() + now.minutes() + now.seconds();
+            if (total <= 00) {
+                clearTimer();
+                callback();
+            }
+        }, interval);
+    }
+    function clearTimer(){
+        timer = clearTimeout(timer);
+        timer = false;
+    }
+
+    ///////////////////////////////
+    /// GAME MODE
+
+    // Create a data model for the data coming in
+    var MindEvent = Model({ 
+        eSense: { 
+            attention: 0, 
+            meditation: 0 
+        },
+        eegPower: { 
+            delta: 0,
+            theta: 0,
+            lowAlpha: 0,
+            highAlpha: 0,
+            lowBeta: 0,
+            highBeta: 0,
+            lowGamma: 0,
+            highGamma: 0 
+        },
+        poorSignalLevel: 0,
+        blinkStrength: 0 
+    });
+
+    var Profile = Model({
+        id: 123,
+        name: '',
+        color: '',
+        quest: '',
+        history: [],
+        date: 'date'
+    });
+
+    var profile = Profile();
+
+    var GameData = Model({
+        id: 0,
+        calm: 0,
+        attention: 0,
+        depth: 0,
+        range: 0,
+        droppedFrames: 0,
+        health: 100,
+        power: 0,
+        delta: 0,
+        theta: 0,
+        score: 0
+    });
+
+
+    var player1 = GameData({ id:1 }); 
+    var player2 = GameData({ id:2 }); 
+
+    // Game Loop
+    $('body').append('<div class="readout"></div>');
+    $('body').append('<div class="meters">'
+        +'<div class="score calm"><div class="inner"></div></div>'
+        +'<div class="score attention"><div class="inner"></div></div>'
+        +'<div class="score depth"><div class="inner"></div></div>'
+        +'<div class="score range"><div class="inner"></div></div>'
+        +'<div class="score health"><div class="inner"></div></div>'
+        +'<div class="score power"><div class="inner"></div></div>'
+        +'<div class="score delta"><div class="inner"></div></div>'
+        +'<div class="score theta"><div class="inner"></div></div>'
+        +'<div class="score2 calm"><div class="inner"></div></div>'
+        +'<div class="score2 attention"><div class="inner"></div></div>'
+        +'<div class="score2 depth"><div class="inner"></div></div>'
+        +'<div class="score2 range"><div class="inner"></div></div>'
+        +'<div class="score2 health"><div class="inner"></div></div>'
+        +'<div class="score2 power"><div class="inner"></div></div>'
+        +'<div class="score2 delta"><div class="inner"></div></div>'
+        +'<div class="score2 theta"><div class="inner"></div></div>'
+        +'</div>');
+    $('.readout').center();
+
+    var updateDisplay = function(data, player){
+
+        var data = MindEvent(data);
+        var output = [];
+        var $display = $('.readout');
+
+        if (data.blinkStrength > 50) {
+            $display.html('<p>Blink!</p>');
+            player.droppedFrames++;
+        
+        } else if (data.poorSignalLevel === 200 || (data.eSense.meditation === 0 && data.eSense.attention === 0)) {
+            $display.html('<p>No Signal from Headset</p>');
+            player.droppedFrames++;
+        
+        } else {
+            
+            $display.html('');
+
+            // Game variables
+            player = _.extend(player, {
+                calm : data.eegPower.lowGamma /1000,
+                attention : data.eegPower.highGamma/1000,
+                depth : data.eegPower.lowAlpha/1000,
+                range : data.eegPower.highAlpha/1000,
+                health : data.eegPower.lowBeta/1000,
+                power : data.eegPower.highBeta/1000,
+                delta : data.eegPower.delta/1000,
+                theta : data.eegPower.theta/1000
+            });
+
+            if (data.eSense.meditation > 90) {
+                player.score += 15;
+            } else if (data.eSense.meditation > 80) {
+                player.score += 3;
+            } else if (data.eSense.meditation > 75) {
+                player.score += 1;
+            } 
+
+            var signalToNoise = Math.floor(((profile.history.length - player.droppedFrames) / profile.history.length) *100)
+
+            // Stats
+            //output.push('Name: '+ profile.name + ' ... Color: '+ profile.color + ' ... Quest: '+ profile.quest);
+            // output.push('<hr />');
+            // output.push('Signal to Noise: ' + signalToNoise + "%");
+            // output.push('Attention Now: ' + data.eSense.attention );                        
+            // output.push('Meditation Now: ' + data.eSense.meditation + '<div class="score meditation"><div class="inner"></div></div>');
+            // output.push('<hr />');
+            // output.push('Attention Score: ' + attentionLevel);
+            // output.push('Meditation Score: ' + meditationLevel);
+            // output.push('Spacey Score: ' + spaceyLevel);
+            //output.push('<hr />');
+
+            // output main display to the browser
+            // if (_.compact(output).length > 0) {
+            //     output = _.map(output, function(value){
+            //         return '<p>'+ value +'</p>'
+            //     });
+            //     $display.html(output.join(''));
+            // }
+        
+            // show the raw eeg data
+            //$display.append(JSON.stringify(data.eegPower));
+    
+            // $('.score.attention .inner').css({'width': (prevAttScore) + "%"});
+            // $('.score.meditation .inner').css({'width': (prevMedScore) + "%"});
+
+            var selector = '.score';
+            if (player.id !== 1) {
+                selector = '.score2';
+            }
+
+            $(selector+'.calm .inner').animate({'height': (player.calm) + "%"}, 900);
+            $(selector+'.attention .inner').animate({'height': (player.attention) + "%"}, 900);
+            $(selector+'.depth .inner').animate({'height': (player.depth) + "%"}, 900);
+            $(selector+'.range .inner').animate({'height': (player.range) + "%"}, 900);
+            $(selector+'.health .inner').animate({'height': (player.health) + "%"}, 900);
+            $(selector+'.power .inner').animate({'height': (player.power) + "%"}, 900);
+            $(selector+'.delta .inner').animate({'height': (player.delta) + "%"}, 900);
+            $(selector+'.theta .inner').animate({'height': (player.theta) + "%"}, 900);
+
+            selector = '.floatL';
+            if (player.id !== 1) {
+                selector = '.floatR';
+            }
+
+            $(selector+'.meditation .progress-bar').css({width: (data.eSense.meditation) + "%"}, 900);
+            $(selector+'.attention .progress-bar').css({width: (data.eSense.attention) + "%"}, 900);
+
+            selector = 'left';
+            if (player.id !== 1) {
+                selector = 'right';
+            }
+
+            setButton(selector, numberWithCommas(player.score), function(){});
+
+        }
+
+    }
+
+    var io = window.io.connect();
+
+    io.on('connect', function (data) {
+        console.log("web socket connected");
+    });
+
+    var graph = graph1();
+    var connected = false;
+    var gameOn = false;
+    var current = 0;
+    var slide = [
+        {
+            left: [ 'Connect One Player', function (){
+                
+                
+                //io.emit('adapter:start');
+                io.emit('request_connect_one');
+                console.log('connecting to thinkgear');
+                var data1, data2;
+                io.on('mindEvent', function(eventData){
+                    console.log(eventData);
+
+                    if (type.arr(eventData)) {
+                        data1 = MindEvent(eventData[0]);
+                        data2 = MindEvent(eventData[1]);
+                    } else {
+                        data1 = MindEvent(eventData);
+                        data2 = MindEvent();
+                    }
+    
+                    if (!connected){
+                        if (data1.eSense.attention > 10
+                            && data1.eSense.meditation > 10
+                        ){
+                            io.emit('game:stop', profile.history);
+                            connected = true;
+                            $('.readout').html('Device Connected');
+                            if (current === 0) next();
+                        } else if (data1.poorSignalLevel > 0) {
+                            $('.readout').html('Poor Signal: ' + data1.poorSignalLevel);
+                            console.log('poor signal: ' + data1.poorSignalLevel);
+                        }
+                    } else if (gameOn) { 
+                        profile.history.push(eventData);
+                        updateDisplay(data1, player1);
+                        updateDisplay(data2, player2);
+                        graph.update();
+                    }
+
+                });
+
+            } ],
+
+
+            right: [ 'Connect Two Player', function (){
+                
+                
+                //io.emit('adapter:start');
+                io.emit('request_connect_two');
+                console.log('connecting to thinkgear');
+                var data1, data2;
+                io.on('mindEvent', function(eventData){
+                    console.log(eventData);
+
+                    if (type.arr(eventData)) {
+                        data1 = MindEvent(eventData[0]);
+                        data2 = MindEvent(eventData[1]);
+                    } else {
+                        data1 = MindEvent(eventData);
+                        data2 = MindEvent();
+                    }
+    
+                    if (!connected){
+                        if (data1.eSense.attention > 1
+                            && data1.eSense.meditation > 1
+                        ){
+                            io.emit('game:stop', profile.history);
+                            connected = true;
+                            $('.readout').html('Device Connected');
+                            if (current === 0) next();
+                        } else if (data1.poorSignalLevel > 0) {
+                            $('.readout').html('Poor Signal: ' + data1.poorSignalLevel);
+                            console.log('poor signal: ' + data1.poorSignalLevel);
+                        }
+                    } else if (gameOn) { 
+                        profile.history.push(eventData);
+                        updateDisplay(data1, player1);
+                        updateDisplay(data2, player2);
+                        graph.update();
+                    }
+
+                });
+
+            } ]
+        },
+        {
+            left: [ '', function(){
+                //console.log('profile');
+            } ],
+            right: [ 'Play Now!', function (){
+                console.log('play now!');
+                next();
+            } ]
+        },
+        {
+            left: [''],
+            right: [''],
+            start: function(done){
+                gameOn = true;
+                io.emit('game:start');
+                $('.readout').html('');
+                profile.history = [];
+                console.log('game starts');
+                startTimer(3, function(){
+                    clearTimer();
+                    gameOn = false;
+                    //io.emit('game:stop');
+                    $('.readout').html('');
+                    io.emit('request_disconnect');
+                    console.log('game complete');
+
+                    // setButton('right', 'Replay', function(){
+                        // window.location.reload();
+                    // });
+                    //next();
+                });
+
+                done();
+            }
+        },
+        {
+            left: [ '', function(){
+                //disconnectIo();
+                //console.log('todo: replay');
+                //go(0);
+            } ],
+            right: [ 'Replay', function (){
+                console.log('todo: save');
+            } ]
+        }
+    ];
+
+
+    // Game engine
+    function next(){
+        if (++current >= slide.length) current = 0;
+        go(current);
+    };
+    function go(which){
+
+        var self = slide[which];
+        current = which;
+
+        var setup = function(){
+            var left = self.left;
+            var right = self.right;
+            setButton('left', left[0], left[1]);
+            setButton('right', right[0], right[1]);
+        }
+
+        if (type.fn(self.start)) {
+            self.start(setup);
+        } else {
+            setup();
+        }
+
+    };
+
+
+    // start
+    go(0);
+
+    });
+
+});
+
+  	</script>
+
+  </body>
+</html>
