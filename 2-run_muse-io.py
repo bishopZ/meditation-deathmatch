@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import platform
 import subprocess
 
 cfg = {
@@ -10,11 +11,15 @@ cfg = {
     'muse_cmd': 'muse-io'
 }
 
+if (platform.system() == 'Darwin'):
+    cfg['muse_path'] = '/Applications/Muse/'
+
 
 def museio_cmd(cfg):
     cmd = cfg['muse_path'] + cfg['muse_cmd']
     cmd += ' --device ' + cfg['dev']
     cmd += ' --osc osc.tcp://' + cfg['ip'] + ':' + cfg['port']
     return cmd
+
 
 return_code = subprocess.call(museio_cmd(cfg), shell=True)

@@ -11,6 +11,11 @@ $script = <<SCRIPT
 # may need to
 # easy_install -U gevent==1.1b4
 
+## Mac Pre-Reqs
+# manually install liblo from source
+# sudo port install py27-cython py27-pip py27-pyqt4 py27-pyqt5 git
+# sudo port select --set pip pip27
+# sudo pip install pyliblo gevent-socketio pyserial gipc
 
 ## Sys Pre-Reqs
 sudo apt-get install -y python python-pip python-dev git liblo-dev python-numpy python-scipy python-pygame python-qt4 python-qt4-dev cython lib32ncurses5
