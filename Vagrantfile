@@ -13,7 +13,7 @@ $script = <<SCRIPT
 
 ## Mac Pre-Reqs
 # manually install liblo from source
-# sudo port install py27-cython py27-pip py27-pyqt4 py27-pyqt5 git
+# sudo port install py27-cython py27-pip py27-pyqt4 py27-pyqt5 git py27-gobject3 py27-webkitgtk
 # sudo port select --set pip pip27
 # sudo pip install pyliblo gevent-socketio pyserial gipc
 
