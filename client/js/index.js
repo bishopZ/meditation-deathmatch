@@ -126,6 +126,7 @@ function show_fft(container) {
     fftwidget.renderer.backgroundColor = 0xFFFFFF;
     fftwidget.demoMode = false;
     fftwidget.maxFrequencyBin = 128;
+    fftwidget.rescaleFactor = 0.12;
     container.html(fftwidget.getView());
     fftwidget.animate();
     return fftwidget;
