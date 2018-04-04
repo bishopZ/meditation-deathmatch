@@ -4,109 +4,32 @@
         <meta charset="utf-8">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <!-- <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"> -->
         <title>Meditation Deathmatch</title>
+
+        <script type="text/javascript" src="eeg-js-widgets/bower_components/pixi.js/bin/pixi.min.js"></script>
+        <script type="text/javascript" src="eeg-js-widgets/js/meters.js"></script>
+        <script type="text/javascript" src="eeg-js-widgets/js/fft.js"></script>
+        <script type="text/javascript" src="eeg-js-widgets/js/waveform.js"></script>
+        <script type="text/javascript" src="eeg-js-widgets/js/horseshoe.js"></script>
+
         <script src="bower_components/d3/d3.js"></script>
         <script src="bower_components/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="js/socket.io.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+
         <link rel="stylesheet" type="text/css" href="css/index.css">
-        <style>
-#game {
-margin-top: 80px;
-margin-left: 50px;
-margin-right: 50px;
-margin-bottom: 0px;
-}
-
-            div.bar {
-                display: inline-block;
-                width: 2px;
-                height: 50px;
-                margin-right: 1px;
-                background-color: black;
-            }
-
-            div.mellowouter {
-                width: 80px;
-                height: 400px;
-                position: relative;
-                margin-left: 10px;
-                border: 1px solid black;
-            }
-
-            div.mellowinner {
-                background-color: orange;
-                position: absolute;
-                height: 200px;
-                width: 80px;
-                bottom: 0;
-            }
-
-            table.disp {
-                width: 100%;
-                height: 100%;
-                position: absolute;
-                bottom: 0;
-                top: 0;
-                left: 0;
-                right: 0;
-            }
-
-            div.fftchart {
-                height: 80px;
-            }
-
-            td.heading {
-                width: 50%;
-                height: 80px;
-                border: 2px solid black;
-                padding-left: 5px;
-                padding-right: 5px;
-                font-size: 48px;
-            }
-
-            td.ffts {
-                vertical-align: text-top;
-            }
-
-            #head0, #head1 {
-                text-align: center;
-            }
-
-			html {
-				width: 100%;
-				height: 100%;
-			}
-
-			body {
-                background-color: white;
-			}
-			
-            #splash {
-                margin: 0px;
-                padding: 15px;
-            }
-
-			#footer {
-				padding: 15px;
-				position: fixed;
-				bottom: 0px;
-				width: 100%;
-				text-align: center;
-			}
-
-        </style>
+        <link rel="stylesheet" type="text/css" href="css/game.css">
     </head>
     <body>
-		<div id="splash" style="display: none">
-			<div id="wrapper">
-				<img src="img/tmr.png" width="892" height="468" />
-			</div>
-			<div id="footer">
-				<input type="button" id="continue" value="Continue" style="font-size: 24px;" />
-			</div>
-		</div>
+        <div id="splash" style="display: none">
+            <div id="wrapper">
+                <img src="img/tmr.png" width="892" height="468" />
+            </div>
+            <div id="footer">
+                <input type="button" id="continue" value="Continue" style="font-size: 24px;" />
+            </div>
+        </div>
         <table id="game" class="disp">
             <tr>
                 <td class="heading" id="head0">
@@ -121,10 +44,7 @@ margin-bottom: 0px;
                     <table>
                         <tr>
                             <td class="ffts">
-                                <div id="myChart0" class="fftchart"></div>
-                                <div id="myChart1" class="fftchart"></div>
-                                <div id="myChart2" class="fftchart"></div>
-                                <div id="myChart3" class="fftchart"></div>
+                                <div id="displayPlayer1"></div>
                                 <br />
                                 <input type="button" id="connect0" value="Connect Player 1" />
                                 <input type="button" id="disconnect0" value="Disconnect Player 1" />
@@ -144,10 +64,7 @@ margin-bottom: 0px;
                     <table>
                         <tr>
                             <td class="ffts">
-                                <div id="myChart4" class="fftchart"></div>
-                                <div id="myChart5" class="fftchart"></div>
-                                <div id="myChart6" class="fftchart"></div>
-                                <div id="myChart7" class="fftchart"></div>
+                                <div id="displayPlayer2"></div>
                                 <br />
                                 <input type="button" id="connect1" value="Connect Player 2" />
                                 <input type="button" id="disconnect1" value="Disconnect Player 2" />

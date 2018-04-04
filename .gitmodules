@@ -1,0 +1,3 @@
+[submodule "client/eeg-js-widgets"]
+	path = client/eeg-js-widgets
+	url = git@github.com:AmbrosIA-Institute/eeg-js-widgets.git

@@ -1,0 +1,86 @@
+#game {
+    width: 90%;
+    height: 90%;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 5%;
+    /* background-color: red; */
+}
+
+div.bar {
+    display: inline-block;
+    width: 2px;
+    height: 50px;
+    margin-right: 1px;
+    background-color: black;
+}
+
+div.mellowouter {
+    width: 80px;
+    height: 400px;
+    position: relative;
+    margin-left: 10px;
+    border: 1px solid black;
+}
+
+div.mellowinner {
+    background-color: orange;
+    position: absolute;
+    height: 200px;
+    width: 80px;
+    bottom: 0;
+}
+
+
+div.fftchart {
+    height: 80px;
+}
+
+td.heading {
+    width: 50%;
+    height: 80px;
+    border: 2px solid black;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 48px;
+}
+
+td.ffts {
+    vertical-align: text-top;
+}
+
+#head0, #head1 {
+    text-align: center;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+
+#splash {
+    margin: 0px;
+    padding: 15px;
+}
+
+#footer {
+    padding: 15px;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    text-align: center;
+}
+
+#displayPlayer1, #displayPlayer2 {
+    width: 100%;
+    height: 400;
+}

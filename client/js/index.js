@@ -1,28 +1,18 @@
 
-var total_p1_packets = 0;
-var packets_between_refresh = 4;
-var fft_since_last_refresh = [packets_between_refresh, packets_between_refresh];
 var track_mellow = [0.0, 0.0];
 var track_score = [0.0, 0.0];
 var timer_tracking;
 var clock;
-var start = new Date().getTime();
-var end = new Date().getTime();
 var two_player_mode = true;
 var game_started = false;
-
+var fft_widgets = [{}, {}];
 var socket;
 
-function chart_update_for_data(sel, data) {
-    var clip = 1000;
+
+function chart_update_for_data(player, channel, data) {
+    var clip = 0;
     data[0] = clip;
-    d3.select(sel).selectAll("div.bar")
-        .data(data)
-        .style("height", function(d) {
-            var value = (d > clip) ? clip : d;
-            var barHeight = Math.floor(value / 20.0);
-            return barHeight + "px";
-        });
+    fft_widgets[player].channelData[channel] = data;
 }
 
 
@@ -42,85 +32,37 @@ function handle_packet(packet) {
     } 
     else if (path == '/muse/elements/raw_fft0' || path == '/muse/elements/raw_fft1' || path == '/muse/elements/raw_fft2' || path == '/muse/elements/raw_fft3') {
         if (headset == 0) {
-            total_p1_packets += 1;
-            if (total_p1_packets % 50 == 0) {
-                end = new Date().getTime();
-                var time = end - start;
-                start = end;
-                //console.log('Cycle time: ' + time);
+            if (path == '/muse/elements/raw_fft0') {
+                chart_update_for_data(0, 0, args);
             }
-            if (fft_since_last_refresh[0] >= packets_between_refresh) {
-                if (path == '/muse/elements/raw_fft0') {
-                    chart_update_for_data("#myChart0", args);
-                }
-                if (path == '/muse/elements/raw_fft1') {
-                    chart_update_for_data("#myChart1", args);
-                }
-                if (path == '/muse/elements/raw_fft2') {
-                    chart_update_for_data("#myChart2", args);
-                }
-                if (path == '/muse/elements/raw_fft3') {
-                    chart_update_for_data("#myChart3", args);
-                }
-                fft_since_last_refresh[0] = 0;
+            if (path == '/muse/elements/raw_fft1') {
+                chart_update_for_data(0, 1, args);
             }
-            else {
-                fft_since_last_refresh[0] += 1;
+            if (path == '/muse/elements/raw_fft2') {
+                chart_update_for_data(0, 2, args);
+            }
+            if (path == '/muse/elements/raw_fft3') {
+                chart_update_for_data(0, 3, args);
             }
         }
         if (headset == 1 && two_player_mode) {
-            if (fft_since_last_refresh[1] >= packets_between_refresh) {
-                if (path == '/muse/elements/raw_fft0') {
-                    chart_update_for_data("#myChart4", args);
-                }
-                if (path == '/muse/elements/raw_fft1') {
-                    chart_update_for_data("#myChart5", args);
-                }
-                if (path == '/muse/elements/raw_fft2') {
-                    chart_update_for_data("#myChart6", args);
-                }
-                if (path == '/muse/elements/raw_fft3') {
-                    chart_update_for_data("#myChart7", args);
-                }
-                fft_since_last_refresh[1] = 0;
+            if (path == '/muse/elements/raw_fft0') {
+                chart_update_for_data(1, 0, args);
             }
-            else {
-                fft_since_last_refresh[1] += 1;
+            if (path == '/muse/elements/raw_fft1') {
+                chart_update_for_data(1, 1, args);
+            }
+            if (path == '/muse/elements/raw_fft2') {
+                chart_update_for_data(1, 2, args);
+            }
+            if (path == '/muse/elements/raw_fft3') {
+                chart_update_for_data(1, 3, args);
             }
         }
     }
     else {
         //console.log(JSON.stringify(packet, null, 4));
     }
-}
-
-
-function setup_chart(sel, data) {
-    d3.select(sel).selectAll("div.bar")
-        .data(data)
-        .enter()
-        .append("div")
-        .attr("class", "bar")
-        .style("height", function(d) {
-            var barHeight = d * 5;
-            return barHeight + "px";
-        });
-}
-
-
-function setup_initial_data() {
-    dataset = [];
-    for (i = 0; i < 120; i++) {
-        dataset[i] = 15;
-    }
-    setup_chart("#myChart0", dataset);
-    setup_chart("#myChart1", dataset);
-    setup_chart("#myChart2", dataset);
-    setup_chart("#myChart3", dataset);
-    setup_chart("#myChart4", dataset);
-    setup_chart("#myChart5", dataset);
-    setup_chart("#myChart6", dataset);
-    setup_chart("#myChart7", dataset);
 }
 
 
@@ -177,8 +119,23 @@ function start_game() {
 }
 
 
+function show_fft(container) {
+    var container_height = 400;
+    var container_width = 500;
+    var fftwidget = new FFTWidget(container_width, container_height);
+    fftwidget.renderer.backgroundColor = 0xFFFFFF;
+    fftwidget.demoMode = false;
+    fftwidget.maxFrequencyBin = 128;
+    container.html(fftwidget.getView());
+    fftwidget.animate();
+    return fftwidget;
+}
+
+
 $(document).ready(function() {
-    setup_initial_data();
+    fft_widgets[0] = show_fft($('#displayPlayer1').first());
+    fft_widgets[1] = show_fft($('#displayPlayer2').first());
+
     socket = io.connect();
     socket.emit('request_init_lights');
     socket.on('packet', function(packet) {
