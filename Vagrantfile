@@ -10,6 +10,8 @@ $script = <<SCRIPT
 ## gevent problems ---
 # may need to
 # easy_install -U gevent==1.1b4
+# OR
+# edit handler.py and transports.py in the gevent-socketio module and change 3600 to '3600' in quotes
 
 ## Mac Pre-Reqs
 # manually install liblo from source
@@ -25,6 +27,12 @@ sudo pip install pyliblo gevent-socketio pyserial gipc
 sudo rm -rf meditation-deathmatch
 git clone https://github.com/bishopZ/meditation-deathmatch
 touch pull-done
+
+## Stages
+# You'll need to make sure you have a working arduino with the right sketch plugged in and you'll need to find the device name with dmesg or something
+# Once you have that, make sure it matches as the ser_device variable in lib/socketiogame.py
+
+## Headsets
 
 SCRIPT
 
