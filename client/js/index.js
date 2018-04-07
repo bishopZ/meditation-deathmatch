@@ -102,6 +102,7 @@ function start_game() {
             clock = clock - 1;
             if (clock <= 0) {
                 window.clearInterval(timer_tracking);
+                game_started = false;
             }
             for (i = 0; i < 2; i++) {
                 scaled = track_mellow[i] * 100;

@@ -13,6 +13,7 @@ cfg = {
 
 if (platform.system() == 'Darwin'):
     cfg['muse_path'] = '/Applications/Muse/'
+    cfg['dev'] = 'MuseD'
 
 
 def museio_cmd(cfg):
